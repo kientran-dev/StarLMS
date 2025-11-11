@@ -1,0 +1,21 @@
+package com.starlms.starlms.dao;
+
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.Query;
+
+import com.starlms.starlms.entity.User;
+
+import java.util.List;
+
+@Dao
+public interface UserDao {
+    @Query("SELECT * FROM users")
+    List<User> getAll();
+
+    @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
+    User findById(int userId);
+
+    @Insert
+    void insertAll(User... users);
+}
