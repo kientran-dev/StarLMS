@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">StarLMS</string>
+
+    <string-array name="leave_reasons">
+        <item>Ốm, bệnh</item>
+        <item>Việc gia đình</item>
+        <item>Trùng lịch</item>
+        <item>Khác</item>
+    </string-array>
 </resources>

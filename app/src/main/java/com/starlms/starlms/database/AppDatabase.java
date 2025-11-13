@@ -6,12 +6,27 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.starlms.starlms.dao.AttendanceDao;
+import com.starlms.starlms.dao.CourseDao;
+import com.starlms.starlms.dao.GradeDao;
+import com.starlms.starlms.dao.SessionDao;
+import com.starlms.starlms.dao.TestDao;
 import com.starlms.starlms.dao.UserDao;
+import com.starlms.starlms.entity.Attendance;
+import com.starlms.starlms.entity.Course;
+import com.starlms.starlms.entity.Grade;
+import com.starlms.starlms.entity.Session;
+import com.starlms.starlms.entity.Test;
 import com.starlms.starlms.entity.User;
 
-@Database(entities = {User.class}, version = 1)
+@Database(entities = {User.class, Course.class, Session.class, Attendance.class, Test.class, Grade.class}, version = 6, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
+    public abstract CourseDao courseDao();
+    public abstract SessionDao sessionDao();
+    public abstract AttendanceDao attendanceDao();
+    public abstract TestDao testDao();
+    public abstract GradeDao gradeDao();
 
     private static volatile AppDatabase INSTANCE;
 
@@ -21,6 +36,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "starlms_database")
+                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }
