@@ -20,6 +20,7 @@ public class CoursesActivity extends AppCompatActivity implements CourseAdapter.
     public static final String EXTRA_MODE = "EXTRA_MODE";
     public static final String MODE_ATTENDANCE = "attendance";
     public static final String MODE_GRADES = "grades";
+    public static final String MODE_ASSIGNMENTS = "assignments";
 
     private ActivityCoursesBinding binding;
     private CourseAdapter adapter;
@@ -42,6 +43,8 @@ public class CoursesActivity extends AppCompatActivity implements CourseAdapter.
 
         if (MODE_GRADES.equals(currentMode)) {
             getSupportActionBar().setTitle("Chọn khóa học để xem điểm");
+        } else if (MODE_ASSIGNMENTS.equals(currentMode)) {
+            getSupportActionBar().setTitle("Chọn khóa học để xem bài tập");
         } else {
             getSupportActionBar().setTitle("Chọn khóa học để điểm danh");
         }
@@ -72,6 +75,10 @@ public class CoursesActivity extends AppCompatActivity implements CourseAdapter.
             Intent intent = new Intent(this, GradesActivity.class);
             intent.putExtra(GradesActivity.EXTRA_COURSE_ID, course.getCourseId());
             intent.putExtra(GradesActivity.EXTRA_COURSE_NAME, course.getName());
+            startActivity(intent);
+        } else if (MODE_ASSIGNMENTS.equals(currentMode)) {
+            Intent intent = new Intent(this, AssignmentsActivity.class);
+            intent.putExtra("COURSE_ID", course.getCourseId());
             startActivity(intent);
         } else {
             Intent intent = new Intent(this, SessionsActivity.class);

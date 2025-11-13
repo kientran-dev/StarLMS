@@ -10,10 +10,12 @@ import com.starlms.starlms.databinding.ActivityMainBinding;
 import com.starlms.starlms.databinding.ItemFeatureBinding;
 import com.starlms.starlms.entity.Course;
 import com.starlms.starlms.entity.Grade;
+import com.starlms.starlms.entity.Question;
 import com.starlms.starlms.entity.Session;
 import com.starlms.starlms.entity.Test;
 import com.starlms.starlms.entity.User;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -32,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         // Set text for each feature
         setupFeature(binding.featureAttendance, "Điểm danh, Xin nghỉ học");
         setupFeature(binding.featureGrades, "Bảng điểm học tập");
-        setupFeature(binding.featureTasks, "Nhiệm vụ, bài tập");
+        setupFeature(binding.featureTasks, "Bài tập trắc nghiệm");
         setupFeature(binding.featureSchedule, "Thời khóa biểu lớp học");
         setupFeature(binding.featureStudentInfo, "Thông tin học sinh");
         setupFeature(binding.featureSurvey, "Khảo sát");
@@ -52,6 +54,12 @@ public class MainActivity extends AppCompatActivity {
         binding.featureGrades.getRoot().setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CoursesActivity.class);
             intent.putExtra(CoursesActivity.EXTRA_MODE, CoursesActivity.MODE_GRADES);
+            startActivity(intent);
+        });
+
+        binding.featureTasks.getRoot().setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CoursesActivity.class);
+            intent.putExtra(CoursesActivity.EXTRA_MODE, CoursesActivity.MODE_ASSIGNMENTS);
             startActivity(intent);
         });
 
@@ -95,14 +103,22 @@ public class MainActivity extends AppCompatActivity {
             db.sessionDao().insertAll(session1);
 
             // Tests for Course 1
-            Test c1Test1 = new Test(0, "Test 1", 100, (int) course1Id);
-            Test c1Test2 = new Test(0, "Test 2", 100, (int) course1Id);
-            Test c1Test3 = new Test(0, "Test 3", 100, (int) course1Id);
-            db.testDao().insertAll(c1Test1, c1Test2, c1Test3);
+            Test c1Test1 = new Test(0, "Test 1", "Bài tập về thì hiện tại đơn.", 10, (int) course1Id);
+            Test c1Test2 = new Test(0, "Test 2", "Bài tập về từ vựng chủ đề gia đình.", 15, (int) course1Id);
+            Test c1Test3 = new Test(0, "Test 3", "Bài tập nghe về đoạn hội thoại ngắn.", 20, (int) course1Id);
+            List<Long> testIds = db.testDao().insertAll(c1Test1, c1Test2, c1Test3);
+
+            long c1Test1Id = testIds.get(0);
+            long c1Test2Id = testIds.get(1);
+
+            // Questions for Test 2
+            Question q1 = new Question(0, "Which of the following is a synonym for 'mother'?", "Father", "Sister", "Mom", "Brother", 3, (int) c1Test2Id);
+            Question q2 = new Question(0, "The son of your uncle is your ____?", "Brother", "Cousin", "Nephew", "Son", 2, (int) c1Test2Id);
+            Question q3 = new Question(0, "A person who has no brothers or sisters is an ____ child.", "Only", "Alone", "Single", "Unique", 1, (int) c1Test2Id);
+            db.questionDao().insertAll(q1, q2, q3);
 
             // Grades for Course 1
-            long c1Test1Id = db.testDao().getTestsForCourse((int) course1Id).get(0).getTestId();
-            Grade grade1 = new Grade(0, 85.5, userId, (int) c1Test1Id);
+            Grade grade1 = new Grade(0, 8, userId, (int) c1Test1Id);
             db.gradeDao().insertAll(grade1);
 
             // --- Course 2: TOEIC Online ---
@@ -114,9 +130,9 @@ public class MainActivity extends AppCompatActivity {
             db.sessionDao().insertAll(session3);
 
             // Tests for Course 2
-            Test c2Test1 = new Test(0, "Test 1", 100, (int) course2Id);
-            Test c2Test2 = new Test(0, "Test 2", 100, (int) course2Id);
-            Test c2Test3 = new Test(0, "Test 3", 100, (int) course2Id);
+            Test c2Test1 = new Test(0, "Test 1", "Description for Test 1", 100, (int) course2Id);
+            Test c2Test2 = new Test(0, "Test 2", "Description for Test 2", 100, (int) course2Id);
+            Test c2Test3 = new Test(0, "Test 3", "Description for Test 3", 100, (int) course2Id);
             db.testDao().insertAll(c2Test1, c2Test2, c2Test3);
         });
     }

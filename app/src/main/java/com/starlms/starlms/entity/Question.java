@@ -17,17 +17,20 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity(tableName = "tests",
-        foreignKeys = @ForeignKey(entity = Course.class,
-                                  parentColumns = "courseId",
-                                  childColumns = "courseOwnerId",
+@Entity(tableName = "questions",
+        foreignKeys = @ForeignKey(entity = Test.class,
+                                  parentColumns = "testId",
+                                  childColumns = "testOwnerId",
                                   onDelete = ForeignKey.CASCADE),
-        indices = {@Index("courseOwnerId")})
-public class Test {
+        indices = {@Index("testOwnerId")})
+public class Question {
     @PrimaryKey(autoGenerate = true)
-    int testId;
-    String testName; // e.g., "Test 1", "Mid-term Exam"
-    String description;
-    int maxScore;
-    int courseOwnerId;
+    int questionId;
+    String questionText;
+    String optionA;
+    String optionB;
+    String optionC;
+    String optionD;
+    int correctOption; // 1 for A, 2 for B, etc.
+    int testOwnerId;
 }

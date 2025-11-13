@@ -29,6 +29,8 @@
         <activity android:name=".SessionsActivity" />
         <activity android:name=".RequestLeaveActivity" />
         <activity android:name=".GradesActivity" />
+        <activity android:name=".AssignmentsActivity" />
+        <activity android:name=".QuizActivity" />
     </application>
 
 </manifest>

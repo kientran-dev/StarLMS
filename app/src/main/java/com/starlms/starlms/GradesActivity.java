@@ -59,7 +59,7 @@ public class GradesActivity extends AppCompatActivity {
             List<GradeInfo> gradeInfos = new ArrayList<>();
 
             for (Test test : tests) {
-                Grade grade = db.gradeDao().getGradeForUserAndTest(userId, test.getTestId());
+                Grade grade = db.gradeDao().getGradeForTest(userId, test.getTestId());
                 double score = (grade != null) ? grade.getScore() : -1; // Use -1 to indicate no score
                 gradeInfos.add(new GradeInfo(test.getTestName(), score, test.getMaxScore()));
             }

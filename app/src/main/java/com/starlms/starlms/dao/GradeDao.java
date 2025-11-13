@@ -12,5 +12,5 @@ public interface GradeDao {
     void insertAll(Grade... grades);
 
     @Query("SELECT * FROM grades WHERE userId = :userId AND testId = :testId LIMIT 1")
-    Grade getGradeForUserAndTest(int userId, int testId);
+    Grade getGradeForTest(int userId, int testId);
 }
