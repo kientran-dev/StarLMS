@@ -11,6 +11,7 @@ import com.starlms.starlms.dao.CourseDao;
 import com.starlms.starlms.dao.GradeDao;
 import com.starlms.starlms.dao.QuestionDao;
 import com.starlms.starlms.dao.SessionDao;
+import com.starlms.starlms.dao.TeacherDao;
 import com.starlms.starlms.dao.TestDao;
 import com.starlms.starlms.dao.UserDao;
 import com.starlms.starlms.entity.Attendance;
@@ -18,10 +19,11 @@ import com.starlms.starlms.entity.Course;
 import com.starlms.starlms.entity.Grade;
 import com.starlms.starlms.entity.Question;
 import com.starlms.starlms.entity.Session;
+import com.starlms.starlms.entity.Teacher;
 import com.starlms.starlms.entity.Test;
 import com.starlms.starlms.entity.User;
 
-@Database(entities = {User.class, Course.class, Session.class, Attendance.class, Test.class, Grade.class, Question.class}, version = 8, exportSchema = false)
+@Database(entities = {User.class, Course.class, Session.class, Attendance.class, Test.class, Grade.class, Question.class, Teacher.class}, version = 9, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract CourseDao courseDao();
@@ -30,6 +32,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract TestDao testDao();
     public abstract GradeDao gradeDao();
     public abstract QuestionDao questionDao();
+    public abstract TeacherDao teacherDao();
 
     private static volatile AppDatabase INSTANCE;
 

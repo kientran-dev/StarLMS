@@ -2,6 +2,7 @@ package com.starlms.starlms.dao;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.starlms.starlms.entity.User;
@@ -16,6 +17,9 @@ public interface UserDao {
     @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
     User findById(int userId);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(User... users);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    long insertAndGetId(User user);
 }

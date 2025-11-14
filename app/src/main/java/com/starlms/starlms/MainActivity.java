@@ -12,9 +12,11 @@ import com.starlms.starlms.entity.Course;
 import com.starlms.starlms.entity.Grade;
 import com.starlms.starlms.entity.Question;
 import com.starlms.starlms.entity.Session;
+import com.starlms.starlms.entity.Teacher;
 import com.starlms.starlms.entity.Test;
 import com.starlms.starlms.entity.User;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         setupFeature(binding.featureStudentInfo, "Thông tin học sinh");
         setupFeature(binding.featureSurvey, "Khảo sát");
 
-        // Set click listeners
+        // Set other click listeners
         binding.featureStudentInfo.getRoot().setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
@@ -63,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Insert sample data
+        // The click listener for the schedule will be set after the sample data is inserted
+
         insertSampleData();
     }
 
@@ -75,65 +78,75 @@ public class MainActivity extends AppCompatActivity {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
-
-            // Clear previous data to ensure consistency
             db.clearAllTables();
 
             // Sample User
             User user = new User();
-            user.setUsername("anhtao");
+            user.setUsername("student");
             user.setPassword("password");
-            user.setStudentId("012578132");
+            user.setStudentId("S12345");
             user.setFullName("Lê Anh Tạo");
             user.setDateOfBirth("18/11/2004");
             user.setGender("Nam");
-            user.setPhone("012578132");
-            user.setAddress("Hà nội");
-            user.setContactName("Lê Anh Tạo");
-            user.setContactPhone("098728782");
-            db.userDao().insertAll(user);
-            int userId = db.userDao().getAll().get(0).getId();
+            user.setPhone("0123456789");
+            user.setAddress("Hanoi, Vietnam");
+            user.setContactName("Phụ huynh của Tạo");
+            user.setContactPhone("0987654321");
+            long userId = db.userDao().insertAndGetId(user);
 
-            // --- Course 1: IELTS Foundation ---
+            // Sample Teachers
+            Teacher teacher1 = new Teacher("John Doe", "john.doe@example.com");
+            Teacher teacher2 = new Teacher("Jane Smith", "jane.smith@example.com");
+            long teacher1Id = db.teacherDao().insertAndGetId(teacher1);
+            long teacher2Id = db.teacherDao().insertAndGetId(teacher2);
+
+            // --- Course 1: IELTS Foundation (Offline) ---
             Course course1 = new Course(0, "IELTS Foundation", "offline");
             long course1Id = db.courseDao().insertAndGetId(course1);
 
-            // Sessions for Course 1
-            Session session1 = new Session(0, System.currentTimeMillis(), "Buổi 1: Introduction", (int) course1Id);
-            db.sessionDao().insertAll(session1);
+            Calendar cal = Calendar.getInstance();
+
+            // Sessions for Course 1 (Offline)
+            cal.set(2025, Calendar.NOVEMBER, 4, 9, 0);
+            Session session1 = new Session(cal.getTimeInMillis(), "Session 1: Introduction to IELTS", (int) course1Id, (int) teacher1Id, "Room 101");
+            cal.set(2025, Calendar.NOVEMBER, 6, 14, 0);
+            Session session2 = new Session(cal.getTimeInMillis(), "Session 2: Listening & Speaking", (int) course1Id, (int) teacher1Id, "Room 101");
+            cal.set(2025, Calendar.NOVEMBER, 8, 10, 30);
+            Session session3 = new Session(cal.getTimeInMillis(), "Session 3: Reading & Writing", (int) course1Id, (int) teacher2Id, "Room 202");
+            db.sessionDao().insertAll(session1, session2, session3);
 
             // Tests for Course 1
-            Test c1Test1 = new Test(0, "Test 1", "Bài tập về thì hiện tại đơn.", 10, (int) course1Id);
-            Test c1Test2 = new Test(0, "Test 2", "Bài tập về từ vựng chủ đề gia đình.", 15, (int) course1Id);
-            Test c1Test3 = new Test(0, "Test 3", "Bài tập nghe về đoạn hội thoại ngắn.", 20, (int) course1Id);
-            List<Long> testIds = db.testDao().insertAll(c1Test1, c1Test2, c1Test3);
-
+            Test c1Test1 = new Test(0, "Grammar Test 1", "Simple present and past tenses.", 10, (int) course1Id);
+            Test c1Test2 = new Test(0, "Vocabulary Test 1", "Family and daily routine topics.", 15, (int) course1Id);
+            List<Long> testIds = db.testDao().insertAll(c1Test1, c1Test2);
             long c1Test1Id = testIds.get(0);
             long c1Test2Id = testIds.get(1);
 
             // Questions for Test 2
             Question q1 = new Question(0, "Which of the following is a synonym for 'mother'?", "Father", "Sister", "Mom", "Brother", 3, (int) c1Test2Id);
             Question q2 = new Question(0, "The son of your uncle is your ____?", "Brother", "Cousin", "Nephew", "Son", 2, (int) c1Test2Id);
-            Question q3 = new Question(0, "A person who has no brothers or sisters is an ____ child.", "Only", "Alone", "Single", "Unique", 1, (int) c1Test2Id);
-            db.questionDao().insertAll(q1, q2, q3);
+            db.questionDao().insertAll(q1, q2);
 
             // Grades for Course 1
-            Grade grade1 = new Grade(0, 8, userId, (int) c1Test1Id);
+            Grade grade1 = new Grade(0, 8, (int) userId, (int) c1Test1Id);
             db.gradeDao().insertAll(grade1);
 
             // --- Course 2: TOEIC Online ---
             Course course2 = new Course(0, "TOEIC Online", "online");
             long course2Id = db.courseDao().insertAndGetId(course2);
 
-            // Sessions for Course 2
-            Session session3 = new Session(0, System.currentTimeMillis(), "Video 1: Grammar Basics", (int) course2Id);
-            db.sessionDao().insertAll(session3);
+            // Sessions for Course 2 (Online)
+            Session session4 = new Session(System.currentTimeMillis(), "Video 1: Grammar Basics", (int) course2Id, null, null);
+            db.sessionDao().insertAll(session4);
 
-            // Tests for Course 2
-            Test c2Test1 = new Test(0, "Test 1", "Description for Test 1", 100, (int) course2Id);
-            Test c2Test2 = new Test(0, "Test 2", "Description for Test 2", 100, (int) course2Id);
-            Test c2Test3 = new Test(0, "Test 3", "Description for Test 3", 100, (int) course2Id);
-            db.testDao().insertAll(c2Test1, c2Test2, c2Test3);
+            // Update the click listener on the main thread after data is ready
+            runOnUiThread(() -> {
+                binding.featureSchedule.getRoot().setOnClickListener(v -> {
+                    Intent intent = new Intent(MainActivity.this, ScheduleActivity.class);
+                    intent.putExtra(ScheduleActivity.EXTRA_COURSE_ID, (int) course1Id);
+                    startActivity(intent);
+                });
+            });
         });
     }
 }

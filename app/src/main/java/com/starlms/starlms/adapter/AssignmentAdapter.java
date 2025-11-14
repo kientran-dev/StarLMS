@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.starlms.starlms.R;
-import com.starlms.starlms.model.Assignment;
+import com.starlms.starlms.entity.Assignment;
 
 import java.util.List;
 

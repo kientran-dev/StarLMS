@@ -31,6 +31,7 @@
         <activity android:name=".GradesActivity" />
         <activity android:name=".AssignmentsActivity" />
         <activity android:name=".QuizActivity" />
+        <activity android:name=".ScheduleActivity" />
     </application>
 
 </manifest>

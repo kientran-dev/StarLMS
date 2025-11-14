@@ -10,7 +10,7 @@ import com.starlms.starlms.database.AppDatabase;
 import com.starlms.starlms.databinding.ActivityGradesBinding;
 import com.starlms.starlms.entity.Grade;
 import com.starlms.starlms.entity.Test;
-import com.starlms.starlms.model.GradeInfo;
+import com.starlms.starlms.entity.GradeInfo;
 
 import java.util.ArrayList;
 import java.util.List;

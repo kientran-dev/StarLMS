@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.starlms.starlms.databinding.ItemGradeBinding;
-import com.starlms.starlms.model.GradeInfo;
+import com.starlms.starlms.entity.GradeInfo;
 
 import java.util.List;
 import java.util.Locale;

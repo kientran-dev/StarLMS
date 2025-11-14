@@ -11,9 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.starlms.starlms.adapter.AssignmentAdapter;
 import com.starlms.starlms.database.AppDatabase;
 import com.starlms.starlms.databinding.ActivityAssignmentsBinding;
+import com.starlms.starlms.entity.Assignment;
 import com.starlms.starlms.entity.Grade;
 import com.starlms.starlms.entity.Test;
-import com.starlms.starlms.model.Assignment;
 
 import java.util.ArrayList;
 import java.util.List;
