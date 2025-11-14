@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/admin_navigation_dashboard"
+        android:icon="@android:drawable/ic_menu_today"
+        android:title="Dashboard" />
+    <item
+        android:id="@+id/admin_navigation_features"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:title="Chức năng" />
+</menu>

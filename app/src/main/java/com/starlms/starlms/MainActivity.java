@@ -200,8 +200,8 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
                 long userId = db.userDao().insertAndGetId(user);
 
                 // --- TEACHERS ---
-                Teacher teacher1 = new Teacher("Mr. John Doe", "john.doe@example.com");
-                Teacher teacher2 = new Teacher("Ms. Jane Smith", "jane.smith@example.com");
+                Teacher teacher1 = new Teacher("Mr. John Doe", "john.doe@example.com", "0987654321");
+                Teacher teacher2 = new Teacher("Ms. Jane Smith", "jane.smith@example.com", "0123456789");
                 long teacher1Id = db.teacherDao().insertAndGetId(teacher1);
                 long teacher2Id = db.teacherDao().insertAndGetId(teacher2);
 

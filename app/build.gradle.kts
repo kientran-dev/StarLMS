@@ -52,4 +52,7 @@ dependencies {
     // Room components
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
+
+    // MPAndroidChart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }
