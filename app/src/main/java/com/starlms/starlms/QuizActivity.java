@@ -1,5 +1,6 @@
 package com.starlms.starlms;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.widget.RadioButton;
 import android.widget.Toast;
@@ -22,7 +23,7 @@ public class QuizActivity extends AppCompatActivity {
     private ActivityQuizBinding binding;
     private List<Question> questions;
     private int currentQuestionIndex = 0;
-    private int score = 0;
+    private int correctAnswers = 0;
     private int testId;
     private int userId;
 
@@ -34,7 +35,7 @@ public class QuizActivity extends AppCompatActivity {
 
         testId = getIntent().getIntExtra(EXTRA_TEST_ID, -1);
         if (testId == -1) {
-            finish(); // Cannot proceed without a test ID
+            finish(); 
             return;
         }
 
@@ -50,10 +51,11 @@ public class QuizActivity extends AppCompatActivity {
         executor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
             questions = db.questionDao().getQuestionsForTest(testId);
-            userId = db.userDao().getAll().get(0).getId(); // Assuming single user
+            userId = db.userDao().getAll().get(0).getId();
 
             runOnUiThread(() -> {
                 if (questions != null && !questions.isEmpty()) {
+                    binding.toolbar.setTitle("Câu hỏi: " + (currentQuestionIndex + 1) + "/" + questions.size());
                     displayQuestion();
                 } else {
                     Toast.makeText(this, "Không có câu hỏi cho bài tập này.", Toast.LENGTH_SHORT).show();
@@ -75,6 +77,7 @@ public class QuizActivity extends AppCompatActivity {
         if (currentQuestionIndex == questions.size() - 1) {
             binding.nextButton.setText("Nộp bài");
         }
+        binding.toolbar.setTitle("Câu hỏi: " + (currentQuestionIndex + 1) + "/" + questions.size());
     }
 
     private void handleNextButtonClick() {
@@ -88,7 +91,7 @@ public class QuizActivity extends AppCompatActivity {
         int selectedAnswer = binding.optionsGroup.indexOfChild(selectedRadioButton) + 1;
 
         if (selectedAnswer == questions.get(currentQuestionIndex).getCorrectOption()) {
-            score++;
+            correctAnswers++;
         }
 
         currentQuestionIndex++;
@@ -100,15 +103,18 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void finishQuiz() {
+        // Calculate score as a percentage
+        int finalScore = (correctAnswers * 100) / questions.size();
+
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
-            Grade newGrade = new Grade(0, score, userId, testId);
+            Grade newGrade = new Grade(0, finalScore, userId, testId);
             db.gradeDao().insertAll(newGrade);
 
             runOnUiThread(() -> {
-                Toast.makeText(this, "Bạn đã hoàn thành bài thi! Điểm của bạn: " + score + "/" + questions.size(), Toast.LENGTH_LONG).show();
-                setResult(RESULT_OK);
+                Toast.makeText(this, "Bạn đã hoàn thành bài thi! Điểm của bạn: " + finalScore, Toast.LENGTH_LONG).show();
+                setResult(Activity.RESULT_OK);
                 finish();
             });
         });

@@ -13,6 +13,9 @@ public interface TestDao {
     @Insert
     List<Long> insertAll(Test... tests);
 
+    @Insert
+    long insertAndGetId(Test test);
+
     @Query("SELECT * FROM tests WHERE courseOwnerId = :courseId")
     List<Test> getTestsForCourse(int courseId);
 }

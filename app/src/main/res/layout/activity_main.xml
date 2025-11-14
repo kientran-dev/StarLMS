@@ -80,6 +80,28 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Thông báo gần đây"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:layout_marginBottom="8dp"/>
+
+                <!-- Notification Slider -->
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/view_pager_notifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp" />
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tab_layout_dots"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:tabBackground="@drawable/tab_selector"
+                    app:tabGravity="center"
+                    app:tabIndicatorHeight="0dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
                     android:text="Các chức năng"
                     android:textAppearance="?attr/textAppearanceTitleMedium"/>
 
@@ -108,43 +130,6 @@
                     <include layout="@layout/item_feature" android:id="@+id/feature_survey" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
 
                 </LinearLayout>
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="Thông báo gần đây"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"/>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Tiêu đề thông báo"
-                            android:textAppearance="?attr/textAppearanceTitleSmall"
-                            android:textColor="?attr/colorPrimary"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="13:00 05/11/2025"
-                            android:textAppearance="?attr/textAppearanceBodySmall"/>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 

@@ -31,6 +31,6 @@ public class Question {
     String optionB;
     String optionC;
     String optionD;
-    int correctOption; // 1 for A, 2 for B, etc.
+    int correctOption;
     int testOwnerId;
 }

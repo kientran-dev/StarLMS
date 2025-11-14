@@ -3,21 +3,20 @@ package com.starlms.starlms.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.starlms.starlms.R;
+import com.starlms.starlms.databinding.ItemAssignmentBinding;
 import com.starlms.starlms.entity.Assignment;
 
 import java.util.List;
+import java.util.Locale;
 
 public class AssignmentAdapter extends RecyclerView.Adapter<AssignmentAdapter.AssignmentViewHolder> {
 
-    private List<Assignment> assignments;
-    private OnAssignmentInteractionListener listener;
+    private final List<Assignment> assignments;
+    private final OnAssignmentInteractionListener listener;
 
     public interface OnAssignmentInteractionListener {
         void onStartTest(int testId);
@@ -31,8 +30,9 @@ public class AssignmentAdapter extends RecyclerView.Adapter<AssignmentAdapter.As
     @NonNull
     @Override
     public AssignmentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_assignment, parent, false);
-        return new AssignmentViewHolder(view, listener);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        ItemAssignmentBinding binding = ItemAssignmentBinding.inflate(inflater, parent, false);
+        return new AssignmentViewHolder(binding, listener);
     }
 
     @Override
@@ -43,37 +43,42 @@ public class AssignmentAdapter extends RecyclerView.Adapter<AssignmentAdapter.As
 
     @Override
     public int getItemCount() {
-        return assignments.size();
+        return assignments != null ? assignments.size() : 0;
     }
 
     static class AssignmentViewHolder extends RecyclerView.ViewHolder {
-        private TextView title;
-        private TextView description;
-        private Button startButton;
-        private TextView scoreText;
-        private OnAssignmentInteractionListener listener;
+        private final ItemAssignmentBinding binding;
+        private final OnAssignmentInteractionListener listener;
 
-        public AssignmentViewHolder(@NonNull View itemView, OnAssignmentInteractionListener listener) {
-            super(itemView);
+        public AssignmentViewHolder(ItemAssignmentBinding binding, OnAssignmentInteractionListener listener) {
+            super(binding.getRoot());
+            this.binding = binding;
             this.listener = listener;
-            title = itemView.findViewById(R.id.assignment_title);
-            description = itemView.findViewById(R.id.assignment_description);
-            startButton = itemView.findViewById(R.id.start_button);
-            scoreText = itemView.findViewById(R.id.score_text);
         }
 
-        public void bind(Assignment assignment) {
-            title.setText(assignment.getTest().getTestName());
-            description.setText(assignment.getTest().getDescription());
+        public void bind(final Assignment assignment) {
+            binding.assignmentTitle.setText(assignment.getTest().getTestName());
+            binding.assignmentDescription.setText(assignment.getTest().getDescription());
 
             if (assignment.getGrade() != null) {
-                startButton.setVisibility(View.GONE);
-                scoreText.setVisibility(View.VISIBLE);
-                scoreText.setText("Điểm: " + assignment.getGrade().getScore() + "/" + assignment.getTest().getMaxScore());
+                // If the assignment has been graded
+                binding.actionContainer.setVisibility(View.VISIBLE);
+                binding.scoreContainer.setVisibility(View.VISIBLE);
+                binding.startButton.setVisibility(View.GONE);
+                // Format score to show decimal only if needed
+                double score = assignment.getGrade().getScore();
+                if (score == (long) score) {
+                    binding.scoreValue.setText(String.format(Locale.US, "%d", (long) score));
+                } else {
+                    binding.scoreValue.setText(String.format(Locale.US, "%.1f", score));
+                }
+
             } else {
-                startButton.setVisibility(View.VISIBLE);
-                scoreText.setVisibility(View.GONE);
-                startButton.setOnClickListener(v -> {
+                // If the assignment has not been taken yet
+                binding.actionContainer.setVisibility(View.VISIBLE);
+                binding.startButton.setVisibility(View.VISIBLE);
+                binding.scoreContainer.setVisibility(View.GONE);
+                binding.startButton.setOnClickListener(v -> {
                     if (listener != null) {
                         listener.onStartTest(assignment.getTest().getTestId());
                     }

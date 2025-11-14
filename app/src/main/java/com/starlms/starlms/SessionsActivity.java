@@ -1,16 +1,11 @@
 package com.starlms.starlms;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.starlms.starlms.adapter.SessionAdapter;
@@ -24,13 +19,13 @@ import java.util.concurrent.Executors;
 
 public class SessionsActivity extends AppCompatActivity implements SessionAdapter.OnSessionInteractionListener {
 
-    public static final String EXTRA_COURSE_ID = "EXTRA_COURSE_ID";
-    public static final String EXTRA_COURSE_NAME = "EXTRA_COURSE_NAME";
-    public static final String EXTRA_COURSE_TYPE = "EXTRA_COURSE_TYPE";
-    private static final int CAMERA_PERMISSION_CODE = 101;
+    public static final String EXTRA_COURSE_ID = "COURSE_ID";
+    public static final String EXTRA_COURSE_NAME = "COURSE_NAME";
+    public static final String EXTRA_COURSE_TYPE = "COURSE_TYPE";
 
     private ActivitySessionsBinding binding;
     private SessionAdapter adapter;
+    private int courseId;
     private String courseType;
 
     @Override
@@ -39,26 +34,29 @@ public class SessionsActivity extends AppCompatActivity implements SessionAdapte
         binding = ActivitySessionsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        int courseId = getIntent().getIntExtra(EXTRA_COURSE_ID, -1);
-        String courseName = getIntent().getStringExtra(EXTRA_COURSE_NAME);
+        courseId = getIntent().getIntExtra(EXTRA_COURSE_ID, -1);
         courseType = getIntent().getStringExtra(EXTRA_COURSE_TYPE);
+        String courseName = getIntent().getStringExtra(EXTRA_COURSE_NAME);
 
         setSupportActionBar(binding.toolbarSessions);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(courseName != null ? courseName : "Buổi học");
         binding.toolbarSessions.setNavigationOnClickListener(v -> onBackPressed());
 
+        if ("online".equalsIgnoreCase(courseType)) {
+            getSupportActionBar().setTitle(courseName != null ? "Video bài giảng: " + courseName : "Videos");
+        } else {
+            getSupportActionBar().setTitle(courseName != null ? "Lịch học: " + courseName : "Buổi học");
+        }
+
         setupRecyclerView();
-        loadSessions(courseId);
+        loadSessions();
     }
 
     private void setupRecyclerView() {
         binding.recyclerViewSessions.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private void loadSessions(int courseId) {
-        if (courseId == -1) return;
-
+    private void loadSessions() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
@@ -72,10 +70,9 @@ public class SessionsActivity extends AppCompatActivity implements SessionAdapte
 
     @Override
     public void onCheckInClick(Session session) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-        } else {
-            openCamera();
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(takePictureIntent);
         }
     }
 
@@ -88,28 +85,7 @@ public class SessionsActivity extends AppCompatActivity implements SessionAdapte
 
     @Override
     public void onVideoClick(Session session) {
-        Toast.makeText(this, "Mở video: " + session.getTitle(), Toast.LENGTH_SHORT).show();
-        // Here you would start a video player activity
-    }
-
-    private void openCamera() {
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-            startActivity(cameraIntent);
-        } else {
-            Toast.makeText(this, "Không tìm thấy ứng dụng camera", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera();
-            } else {
-                Toast.makeText(this, "Quyền truy cập camera bị từ chối", Toast.LENGTH_SHORT).show();
-            }
-        }
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(session.getClassroom()));
+        startActivity(intent);
     }
 }

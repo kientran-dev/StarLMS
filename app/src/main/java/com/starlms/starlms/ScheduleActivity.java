@@ -48,9 +48,13 @@ public class ScheduleActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         courseId = getIntent().getIntExtra(EXTRA_COURSE_ID, -1);
+        String courseName = getIntent().getStringExtra("COURSE_NAME");
 
         setSupportActionBar(binding.toolbarSchedule);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(courseName != null ? courseName : "Schedule");
+        }
 
         currentCalendar = Calendar.getInstance();
         dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());

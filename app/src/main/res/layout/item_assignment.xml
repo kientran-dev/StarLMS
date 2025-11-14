@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp">
 
@@ -19,9 +20,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:textAppearance="?attr/textAppearanceTitleMedium"
-            app:layout_constraintEnd_toStartOf="@+id/start_button"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/action_container"
             tools:text="Bài tập giữa kỳ" />
 
         <TextView
@@ -31,32 +33,58 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:textAppearance="?attr/textAppearanceBodyMedium"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/start_button"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/assignment_title"
+            app:layout_constraintTop_toBottomOf="@id/assignment_title"
+            app:layout_constraintEnd_toStartOf="@id/action_container"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            tools:text="Bài kiểm tra trắc nghiệm gồm 20 câu hỏi về các chủ đề đã học." />
+            app:layout_constrainedHeight="true"
+            tools:text="Bài kiểm tra trắc nghiệm gồm 20 câu hỏi về các chủ đề đã học trong suốt nửa đầu của khóa học." />
 
-        <Button
-            android:id="@+id/start_button"
+        <FrameLayout
+            android:id="@+id/action_container"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bắt đầu"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/score_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="0dp"
+            android:minWidth="80dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Điểm: 8/10" />
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <Button
+                android:id="@+id/start_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bắt đầu"
+                android:visibility="gone"
+                tools:visibility="gone"
+                android:layout_gravity="center"/>
+
+            <LinearLayout
+                android:id="@+id/score_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Điểm"
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant"/>
+
+                <TextView
+                    android:id="@+id/score_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                    android:textColor="?attr/colorPrimary"
+                    tools:text="8.5" />
+            </LinearLayout>
+
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
