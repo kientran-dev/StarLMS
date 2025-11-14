@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -48,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
+        getSupportActionBar().setTitle(null);
 
         // Setup Features with appropriate icons
         setupFeature(binding.featureAttendance, "Điểm danh, Xin nghỉ học", android.R.drawable.ic_menu_my_calendar);
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
         setupFeature(binding.featureStudentInfo, "Thông tin học sinh", android.R.drawable.ic_menu_myplaces);
         setupFeature(binding.featureSurvey, "Khảo sát", android.R.drawable.ic_menu_help);
 
-        // Set click listeners
+        // Set feature click listeners
         binding.featureAttendance.getRoot().setOnClickListener(v -> {
             Intent intent = new Intent(this, CoursesActivity.class);
             intent.putExtra(CoursesActivity.EXTRA_MODE, CoursesActivity.MODE_ATTENDANCE);
@@ -77,9 +77,24 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
         binding.featureSurvey.getRoot().setOnClickListener(v -> startActivity(new Intent(this, SurveyActivity.class)));
         binding.featureSchedule.getRoot().setOnClickListener(v -> startActivity(new Intent(this, CoursesActivity.class)));
 
+        // Setup Bottom Navigation
+        binding.bottomNavigation.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_chat) {
+                startActivity(new Intent(this, MessagesActivity.class));
+                return true;
+            } else if (itemId == R.id.navigation_home) {
+                // Already on the home screen, do nothing
+                return true;
+            }
+            return false;
+        });
+
+
         insertSampleData();
         setupNotificationSlider();
     }
+
 
     @Override
     protected void onPause() {
@@ -95,6 +110,11 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
         if (sliderRunnable != null) {
             sliderHandler.postDelayed(sliderRunnable, 4000);
         }
+        // Deselect the item when returning to the activity
+        binding.bottomNavigation.getMenu().findItem(R.id.navigation_chat).setCheckable(false);
+        binding.bottomNavigation.getMenu().findItem(R.id.navigation_chat).setChecked(false);
+        binding.bottomNavigation.getMenu().findItem(R.id.navigation_home).setChecked(true);
+
     }
 
     private void setupFeature(ItemFeatureBinding featureBinding, String text, int iconResId) {
@@ -191,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
 
                 // Sessions for Course 1 (Schedule)
                 Calendar cal = Calendar.getInstance();
-                cal.set(2025, Calendar.NOVEMBER, 4, 18, 0); // 6 PM
+                cal.set(2025, Calendar.NOVEMBER, 4, 18, 0);
                 Session session1 = new Session(cal.getTimeInMillis(), "Intro to IELTS", (int) course1Id, (int) teacher1Id, "Room 101");
                 cal.set(2025, Calendar.NOVEMBER, 6, 18, 0);
                 Session session2 = new Session(cal.getTimeInMillis(), "Listening & Speaking", (int) course1Id, (int) teacher1Id, "Room 101");
@@ -222,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
                 long test1_c2_Id = db.testDao().insertAndGetId(test1_c2);
                 db.gradeDao().insertAll(new Grade(0, 75, (int) userId, (int) test1_c2_Id));
                 Question q1_t1_c2 = new Question(0, "The manager ____ the report yesterday.", "will finish", "finishes", "finished", "has finished", 3, (int) test1_c2_Id);
-                
+
                 Test test2_c2 = new Test(0, "Listening Comprehension 1", "Listen and choose the best response.", 25, (int) course2Id);
                 db.testDao().insertAndGetId(test2_c2);
 

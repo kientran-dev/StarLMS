@@ -4,6 +4,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.starlms.starlms.entity.User;
 
@@ -22,4 +23,7 @@ public interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertAndGetId(User user);
+
+    @Update
+    void update(User user);
 }

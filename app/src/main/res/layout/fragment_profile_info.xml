@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
@@ -9,136 +10,161 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Student ID (Not Editable) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mã số"
+            android:textAppearance="?attr/textAppearanceLabelMedium"/>
+        <TextView
+            android:id="@+id/text_student_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            tools:text="S67890" />
+
+        <!-- Full Name -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Họ và tên"
+            android:textAppearance="?attr/textAppearanceLabelMedium"/>
+        <TextView
+            android:id="@+id/text_full_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            tools:text="Trần Trung Kiên" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_full_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_full_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- DOB -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Ngày sinh"
+            android:textAppearance="?attr/textAppearanceLabelMedium"/>
+        <TextView
+            android:id="@+id/text_dob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            tools:text="15/05/2001" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_dob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_dob"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Gender -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Giới tính"
+            android:textAppearance="?attr/textAppearanceLabelMedium"/>
+        <TextView
+            android:id="@+id/text_gender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            tools:text="Nam" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_gender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_gender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Phone -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Điện thoại"
+            android:textAppearance="?attr/textAppearanceLabelMedium"/>
+        <TextView
+            android:id="@+id/text_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            tools:text="0905111222" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Address -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Địa chỉ"
+            android:textAppearance="?attr/textAppearanceLabelMedium"/>
+        <TextView
+            android:id="@+id/text_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            tools:text="Hà Nội" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
 
-            <TextView
+            <Button
+                android:id="@+id/button_edit"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Mã số"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
+                android:text="Chỉnh sửa" />
 
-            <TextView
-                android:id="@+id/info_student_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="012578132"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-
-            <TextView
+            <Button
+                android:id="@+id/button_save"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Họ và tên"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-            <TextView
-                android:id="@+id/info_full_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Trần Trung Kiên"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Ngày sinh"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-            <TextView
-                android:id="@+id/info_dob"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="18/11/2004"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Giới tính"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-            <TextView
-                android:id="@+id/info_gender"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nam"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Điện thoại"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-            <TextView
-                android:id="@+id/info_phone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="012578132"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Địa chỉ"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-            <TextView
-                android:id="@+id/info_address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hà nội"
-                android:textAppearance="?attr/textAppearanceBodyMedium" />
+                android:text="Lưu"
+                android:visibility="gone" />
         </LinearLayout>
 
     </LinearLayout>

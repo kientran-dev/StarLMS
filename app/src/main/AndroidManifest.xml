@@ -34,6 +34,8 @@
         <activity android:name=".ScheduleActivity" />
         <activity android:name=".SurveyActivity" />
         <activity android:name=".SurveyDetailsActivity" />
+        <activity android:name=".MessagesActivity" />
+        <activity android:name=".ChatActivity" />
     </application>
 
 </manifest>
