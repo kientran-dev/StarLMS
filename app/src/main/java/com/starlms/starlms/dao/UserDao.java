@@ -26,4 +26,7 @@ public interface UserDao {
 
     @Update
     void update(User user);
+
+    @Query("SELECT * FROM users WHERE username = :username AND password = :password LIMIT 1")
+    User login(String username, String password);
 }

@@ -1,7 +1,6 @@
 package com.starlms.starlms;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
@@ -85,7 +84,7 @@ public class SessionsActivity extends AppCompatActivity implements SessionAdapte
 
     @Override
     public void onVideoClick(Session session) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(session.getClassroom()));
+        Intent intent = new Intent(this, VideoPlayerActivity.class);
         startActivity(intent);
     }
 }

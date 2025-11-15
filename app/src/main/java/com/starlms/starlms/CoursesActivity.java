@@ -79,39 +79,37 @@ public class CoursesActivity extends AppCompatActivity implements CourseAdapter.
 
     @Override
     public void onCourseClick(Course course) {
-        switch (currentMode) {
-            case MODE_GRADES:
-                Intent gradesIntent = new Intent(this, GradesActivity.class);
-                gradesIntent.putExtra(GradesActivity.EXTRA_COURSE_ID, course.getCourseId());
-                gradesIntent.putExtra(GradesActivity.EXTRA_COURSE_NAME, course.getName());
-                startActivity(gradesIntent);
-                break;
-            case MODE_ASSIGNMENTS:
-                Intent assignmentsIntent = new Intent(this, AssignmentsActivity.class);
-                assignmentsIntent.putExtra("COURSE_ID", course.getCourseId());
-                startActivity(assignmentsIntent);
-                break;
-            case MODE_ATTENDANCE:
-                 Intent attendanceIntent = new Intent(this, SessionsActivity.class);
-                 attendanceIntent.putExtra(SessionsActivity.EXTRA_COURSE_ID, course.getCourseId());
-                 attendanceIntent.putExtra(SessionsActivity.EXTRA_COURSE_NAME, course.getName());
-                 attendanceIntent.putExtra(SessionsActivity.EXTRA_COURSE_TYPE, course.getType());
-                 startActivity(attendanceIntent);
-                 break;
-            default: // Browsing for schedule or videos
-                if (Objects.equals(course.getType(), "offline")) {
-                    Intent scheduleIntent = new Intent(this, ScheduleActivity.class);
-                    scheduleIntent.putExtra(ScheduleActivity.EXTRA_COURSE_ID, course.getCourseId());
-                    scheduleIntent.putExtra("COURSE_NAME", course.getName()); // Pass the course name
-                    startActivity(scheduleIntent);
-                } else { // "online"
-                    Intent sessionsIntent = new Intent(this, SessionsActivity.class);
-                    sessionsIntent.putExtra(SessionsActivity.EXTRA_COURSE_ID, course.getCourseId());
-                    sessionsIntent.putExtra(SessionsActivity.EXTRA_COURSE_NAME, course.getName());
-                    sessionsIntent.putExtra(SessionsActivity.EXTRA_COURSE_TYPE, course.getType());
-                    startActivity(sessionsIntent);
-                }
-                break;
+        if (Objects.equals(course.getType(), "online")) {
+            Intent intent = new Intent(this, SessionsActivity.class);
+            intent.putExtra(SessionsActivity.EXTRA_COURSE_ID, course.getCourseId());
+            intent.putExtra(SessionsActivity.EXTRA_COURSE_NAME, course.getName());
+            intent.putExtra(SessionsActivity.EXTRA_COURSE_TYPE, course.getType());
+            startActivity(intent);
+        } else { // "offline"
+            Intent intent;
+            switch (currentMode) {
+                case MODE_GRADES:
+                    intent = new Intent(this, GradesActivity.class);
+                    intent.putExtra(GradesActivity.EXTRA_COURSE_ID, course.getCourseId());
+                    intent.putExtra(GradesActivity.EXTRA_COURSE_NAME, course.getName());
+                    break;
+                case MODE_ASSIGNMENTS:
+                    intent = new Intent(this, AssignmentsActivity.class);
+                    intent.putExtra("COURSE_ID", course.getCourseId());
+                    break;
+                case MODE_ATTENDANCE:
+                    intent = new Intent(this, SessionsActivity.class);
+                    intent.putExtra(SessionsActivity.EXTRA_COURSE_ID, course.getCourseId());
+                    intent.putExtra(SessionsActivity.EXTRA_COURSE_NAME, course.getName());
+                    intent.putExtra(SessionsActivity.EXTRA_COURSE_TYPE, course.getType());
+                    break;
+                default: // Browsing for schedule
+                    intent = new Intent(this, ScheduleActivity.class);
+                    intent.putExtra(ScheduleActivity.EXTRA_COURSE_ID, course.getCourseId());
+                    intent.putExtra("COURSE_NAME", course.getName()); // Pass the course name
+                    break;
+            }
+            startActivity(intent);
         }
     }
 }

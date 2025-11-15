@@ -7,12 +7,15 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.starlms.starlms.adapter.NotificationAdapter;
 import com.starlms.starlms.database.AppDatabase;
@@ -80,11 +83,16 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
         // Setup Bottom Navigation
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.navigation_chat) {
+            if (itemId == R.id.navigation_home) {
+                return true; // Do nothing, already home
+            } else if (itemId == R.id.navigation_chat) {
                 startActivity(new Intent(this, MessagesActivity.class));
                 return true;
-            } else if (itemId == R.id.navigation_home) {
-                // Already on the home screen, do nothing
+            } else if (itemId == R.id.navigation_contacts) {
+                showFeedbackDialog();
+                return true;
+            } else if (itemId == R.id.navigation_settings) {
+                showLogoutDialog();
                 return true;
             }
             return false;
@@ -93,6 +101,40 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
 
         insertSampleData();
         setupNotificationSlider();
+    }
+
+    private void showFeedbackDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_feedback, null);
+        builder.setView(dialogView);
+
+        final AlertDialog dialog = builder.create();
+
+        Button sendButton = dialogView.findViewById(R.id.send_feedback_button);
+        EditText feedbackInput = dialogView.findViewById(R.id.feedback_input);
+
+        sendButton.setOnClickListener(v -> {
+            // You can get the text here: feedbackInput.getText().toString();
+            Toast.makeText(this, "Thông tin đã được chuyển thành công", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private void showLogoutDialog() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Đăng xuất")
+                .setMessage("Bạn có chắc chắn muốn đăng xuất không?")
+                .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss())
+                .setPositiveButton("Đăng xuất", (dialog, which) -> {
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .show();
     }
 
 
@@ -110,11 +152,8 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
         if (sliderRunnable != null) {
             sliderHandler.postDelayed(sliderRunnable, 4000);
         }
-        // Deselect the item when returning to the activity
-        binding.bottomNavigation.getMenu().findItem(R.id.navigation_chat).setCheckable(false);
-        binding.bottomNavigation.getMenu().findItem(R.id.navigation_chat).setChecked(false);
+        // Reset item selection on resume
         binding.bottomNavigation.getMenu().findItem(R.id.navigation_home).setChecked(true);
-
     }
 
     private void setupFeature(ItemFeatureBinding featureBinding, String text, int iconResId) {
@@ -138,7 +177,9 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
                 notificationAdapter = new NotificationAdapter(notifications, this);
                 binding.viewPagerNotifications.setAdapter(notificationAdapter);
 
-                new TabLayoutMediator(binding.tabLayoutDots, binding.viewPagerNotifications, (tab, position) -> {}).attach();
+                new TabLayoutMediator(binding.tabLayoutDots, binding.viewPagerNotifications,
+                        (tab, position) -> tab.setIcon(R.drawable.tab_selector)
+                ).attach();
 
                 sliderRunnable = () -> {
                     if (notificationAdapter.getItemCount() > 0) {
