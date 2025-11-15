@@ -38,15 +38,15 @@
         <activity android:name=".ChatActivity" />
 
         <!-- Admin Section -->
-        <activity 
-            android:name=".admin.AdminDashboardActivity"
-            android:exported="true">
+<!--        <activity -->
+<!--            android:name=".admin.AdminDashboardActivity"-->
+<!--            android:exported="true">-->
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
 <!--            </intent-filter>-->
-        </activity>
+<!--        </activity>-->
 
     </application>
 
