@@ -121,11 +121,11 @@ public class ScheduleActivity extends AppCompatActivity {
                 Session session = details.getSession();
                 Teacher teacher = details.getTeacher();
 
-                Date date = new Date(session.getSessionDate());
+                Date date = new Date(session.getSessionDate()); // SỬA Ở ĐÂY
                 String dateTimeString = dateFormat.format(date) + " - " + timeFormat.format(date);
                 String teacherName = (teacher != null) ? teacher.getName() : "N/A";
 
-                allSchedules.add(new Schedule(dateTimeString, session.getTitle(), teacherName, session.getClassroom()));
+                allSchedules.add(new Schedule(dateTimeString, session.getTitle(), teacherName, session.getClassroom())); // SỬA Ở ĐÂY
             }
 
             runOnUiThread(() -> {

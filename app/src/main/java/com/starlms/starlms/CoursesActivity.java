@@ -2,6 +2,7 @@ package com.starlms.starlms;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,22 +11,24 @@ import com.starlms.starlms.adapter.CourseAdapter;
 import com.starlms.starlms.database.AppDatabase;
 import com.starlms.starlms.databinding.ActivityCoursesBinding;
 import com.starlms.starlms.entity.Course;
+import com.starlms.starlms.model.UserWithCourses;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class CoursesActivity extends AppCompatActivity implements CourseAdapter.OnCourseClickListener {
 
     public static final String EXTRA_MODE = "EXTRA_MODE";
-    public static final String MODE_ATTENDANCE = "attendance";
-    public static final String MODE_GRADES = "grades";
-    public static final String MODE_ASSIGNMENTS = "assignments";
+    public static final int MODE_ATTENDANCE = 1;
+    public static final int MODE_GRADES = 2;
+    public static final int MODE_ASSIGNMENTS = 3;
 
     private ActivityCoursesBinding binding;
     private CourseAdapter adapter;
-    private String currentMode;
+    private int mode;
+    private long currentUserId = 1; // TODO: Replace with actual logged-in user ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,44 +36,31 @@ public class CoursesActivity extends AppCompatActivity implements CourseAdapter.
         binding = ActivityCoursesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        currentMode = getIntent().getStringExtra(EXTRA_MODE);
-        if (currentMode == null) {
-            currentMode = ""; 
-        }
+        mode = getIntent().getIntExtra(EXTRA_MODE, 0);
 
         setSupportActionBar(binding.toolbarCourses);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         binding.toolbarCourses.setNavigationOnClickListener(v -> onBackPressed());
 
-        switch (currentMode) {
-            case MODE_GRADES:
-                getSupportActionBar().setTitle("Chọn khóa học để xem điểm");
-                break;
-            case MODE_ASSIGNMENTS:
-                getSupportActionBar().setTitle("Chọn khóa học để xem bài tập");
-                break;
-            case MODE_ATTENDANCE:
-                 getSupportActionBar().setTitle("Chọn khóa học để điểm danh");
-                 break;
-            default:
-                getSupportActionBar().setTitle("Chọn khóa học");
-                break;
-        }
-
         setupRecyclerView();
-        loadCourses();
+        loadUserCourses();
     }
 
     private void setupRecyclerView() {
         binding.recyclerViewCourses.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private void loadCourses() {
+    private void loadUserCourses() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
+        binding.progressBar.setVisibility(View.VISIBLE);
         executor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
-            List<Course> courses = db.courseDao().getAllCourses();
+            // SỬA Ở ĐÂY: Lấy danh sách khóa học của user hiện tại
+            UserWithCourses userWithCourses = db.userDao().getUserWithCourses(currentUserId);
+            List<Course> courses = userWithCourses != null ? userWithCourses.getCourses() : Collections.emptyList();
+
             runOnUiThread(() -> {
+                binding.progressBar.setVisibility(View.GONE);
                 adapter = new CourseAdapter(courses, this);
                 binding.recyclerViewCourses.setAdapter(adapter);
             });
@@ -79,37 +69,25 @@ public class CoursesActivity extends AppCompatActivity implements CourseAdapter.
 
     @Override
     public void onCourseClick(Course course) {
-        if (Objects.equals(course.getType(), "online")) {
-            Intent intent = new Intent(this, SessionsActivity.class);
-            intent.putExtra(SessionsActivity.EXTRA_COURSE_ID, course.getCourseId());
-            intent.putExtra(SessionsActivity.EXTRA_COURSE_NAME, course.getName());
-            intent.putExtra(SessionsActivity.EXTRA_COURSE_TYPE, course.getType());
-            startActivity(intent);
-        } else { // "offline"
-            Intent intent;
-            switch (currentMode) {
-                case MODE_GRADES:
-                    intent = new Intent(this, GradesActivity.class);
-                    intent.putExtra(GradesActivity.EXTRA_COURSE_ID, course.getCourseId());
-                    intent.putExtra(GradesActivity.EXTRA_COURSE_NAME, course.getName());
-                    break;
-                case MODE_ASSIGNMENTS:
-                    intent = new Intent(this, AssignmentsActivity.class);
-                    intent.putExtra("COURSE_ID", course.getCourseId());
-                    break;
-                case MODE_ATTENDANCE:
-                    intent = new Intent(this, SessionsActivity.class);
-                    intent.putExtra(SessionsActivity.EXTRA_COURSE_ID, course.getCourseId());
-                    intent.putExtra(SessionsActivity.EXTRA_COURSE_NAME, course.getName());
-                    intent.putExtra(SessionsActivity.EXTRA_COURSE_TYPE, course.getType());
-                    break;
-                default: // Browsing for schedule
-                    intent = new Intent(this, ScheduleActivity.class);
-                    intent.putExtra(ScheduleActivity.EXTRA_COURSE_ID, course.getCourseId());
-                    intent.putExtra("COURSE_NAME", course.getName()); // Pass the course name
-                    break;
-            }
-            startActivity(intent);
+        Intent intent;
+        switch (mode) {
+            case MODE_ATTENDANCE:
+            case 0: // Default to schedule/video view
+                intent = new Intent(this, SessionsActivity.class);
+                intent.putExtra(SessionsActivity.EXTRA_COURSE_TYPE, course.getType());
+                break;
+            case MODE_GRADES:
+                intent = new Intent(this, GradesActivity.class);
+                break;
+            case MODE_ASSIGNMENTS:
+                intent = new Intent(this, AssignmentsActivity.class);
+                break;
+            default:
+                return; // Or handle error
         }
+
+        intent.putExtra(SessionsActivity.EXTRA_COURSE_ID, course.getCourseId());
+        intent.putExtra(SessionsActivity.EXTRA_COURSE_NAME, course.getName());
+        startActivity(intent);
     }
 }

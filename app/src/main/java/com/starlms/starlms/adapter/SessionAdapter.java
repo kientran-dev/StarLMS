@@ -3,23 +3,29 @@ package com.starlms.starlms.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.starlms.starlms.databinding.ItemSessionBinding;
+import com.starlms.starlms.R;
+import com.starlms.starlms.entity.Attendance;
 import com.starlms.starlms.entity.Session;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionViewHolder> {
 
     private final List<Session> sessions;
+    private final Map<Integer, Attendance> attendanceMap;
     private final String courseType;
     private final OnSessionInteractionListener listener;
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
 
     public interface OnSessionInteractionListener {
         void onCheckInClick(Session session);
@@ -27,8 +33,9 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
         void onVideoClick(Session session);
     }
 
-    public SessionAdapter(List<Session> sessions, String courseType, OnSessionInteractionListener listener) {
+    public SessionAdapter(List<Session> sessions, Map<Integer, Attendance> attendanceMap, String courseType, OnSessionInteractionListener listener) {
         this.sessions = sessions;
+        this.attendanceMap = attendanceMap;
         this.courseType = courseType;
         this.listener = listener;
     }
@@ -36,48 +43,73 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
     @NonNull
     @Override
     public SessionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        ItemSessionBinding binding = ItemSessionBinding.inflate(layoutInflater, parent, false);
-        return new SessionViewHolder(binding);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_session, parent, false);
+        return new SessionViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull SessionViewHolder holder, int position) {
         Session session = sessions.get(position);
-        holder.bind(session, courseType, listener, dateFormat);
+        holder.bind(session, attendanceMap.get(session.getSessionId()), courseType, listener);
     }
 
     @Override
     public int getItemCount() {
-        return sessions != null ? sessions.size() : 0;
+        return sessions.size();
     }
 
     static class SessionViewHolder extends RecyclerView.ViewHolder {
-        private final ItemSessionBinding binding;
+        private final TextView titleTextView;
+        private final TextView dateTextView;
+        private final LinearLayout offlineActionsLayout;
+        private final Button checkInButton;
+        private final Button requestLeaveButton;
+        private final Button statusButton;
 
-        public SessionViewHolder(ItemSessionBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
+        public SessionViewHolder(@NonNull View itemView) {
+            super(itemView);
+            titleTextView = itemView.findViewById(R.id.text_view_session_title);
+            dateTextView = itemView.findViewById(R.id.text_view_session_date);
+            offlineActionsLayout = itemView.findViewById(R.id.layout_offline_actions);
+            checkInButton = itemView.findViewById(R.id.button_check_in);
+            requestLeaveButton = itemView.findViewById(R.id.button_request_leave);
+            statusButton = itemView.findViewById(R.id.button_status);
         }
 
-        public void bind(final Session session, final String courseType, final OnSessionInteractionListener listener, SimpleDateFormat dateFormat) {
-            binding.textViewSessionTitle.setText(session.getTitle());
-            binding.textViewSessionDate.setText(dateFormat.format(session.getSessionDate()));
+        void bind(final Session session, final Attendance attendance, final String courseType, final OnSessionInteractionListener listener) {
+            titleTextView.setText(session.getTitle());
 
             if ("online".equalsIgnoreCase(courseType)) {
-                binding.layoutOfflineActions.setVisibility(View.GONE);
+                dateTextView.setVisibility(View.GONE);
+                offlineActionsLayout.setVisibility(View.GONE);
+                statusButton.setVisibility(View.GONE);
                 itemView.setOnClickListener(v -> listener.onVideoClick(session));
-            } else { // Offline
-                binding.layoutOfflineActions.setVisibility(View.VISIBLE);
-                itemView.setOnClickListener(null); // No action on item click for offline courses
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                dateTextView.setText(sdf.format(new Date(session.getSessionDate())));
+                dateTextView.setVisibility(View.VISIBLE);
+                itemView.setOnClickListener(null);
 
-                // Check-in time limit (2 hours)
-                long twoHoursInMillis = 2 * 60 * 60 * 1000;
-                boolean isCheckInEnabled = System.currentTimeMillis() <= session.getSessionDate() + twoHoursInMillis;
-                binding.buttonCheckIn.setEnabled(isCheckInEnabled);
+                if (attendance != null) {
+                    // Status exists, show the status button
+                    offlineActionsLayout.setVisibility(View.GONE);
+                    statusButton.setVisibility(View.VISIBLE);
 
-                binding.buttonCheckIn.setOnClickListener(v -> listener.onCheckInClick(session));
-                binding.buttonRequestLeave.setOnClickListener(v -> listener.onRequestLeaveClick(session));
+                    String status = attendance.getStatus();
+                    if ("PRESENT".equalsIgnoreCase(status)) {
+                        statusButton.setText("Đã điểm danh");
+                    } else if ("LEAVE_REQUESTED".equalsIgnoreCase(status)) {
+                        statusButton.setText("Đã xin nghỉ");
+                    } else {
+                        statusButton.setText(status); // Fallback
+                    }
+                } else {
+                    // No status, show action buttons
+                    offlineActionsLayout.setVisibility(View.VISIBLE);
+                    statusButton.setVisibility(View.GONE);
+                    checkInButton.setOnClickListener(v -> listener.onCheckInClick(session));
+                    requestLeaveButton.setOnClickListener(v -> listener.onRequestLeaveClick(session));
+                }
             }
         }
     }

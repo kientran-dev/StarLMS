@@ -14,6 +14,8 @@ import com.starlms.starlms.R;
 import com.starlms.starlms.admin.fragment.AdminCourseManagementFragment;
 import com.starlms.starlms.admin.fragment.AdminDashboardFragment;
 import com.starlms.starlms.admin.fragment.AdminFeaturesFragment;
+import com.starlms.starlms.admin.fragment.AdminLeaveCoursesFragment;
+import com.starlms.starlms.admin.fragment.AdminScheduleCourseSelectionFragment; // THÊM IMPORT
 import com.starlms.starlms.admin.fragment.AdminSurveyManagementFragment;
 import com.starlms.starlms.admin.fragment.AdminTeacherManagementFragment;
 
@@ -45,15 +47,12 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminFe
             return true;
         });
 
-        // Lắng nghe sự thay đổi của Back Stack để ẩn/hiện header và bottom menu
         getSupportFragmentManager().addOnBackStackChangedListener(() -> {
             int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
             if (backStackEntryCount > 0) {
-                // Nếu có màn hình chi tiết, ẩn header và bottom menu
                 appBarLayout.setVisibility(View.GONE);
                 bottomNavigationView.setVisibility(View.GONE);
             } else {
-                // Nếu quay về màn hình gốc, hiện lại header và bottom menu
                 appBarLayout.setVisibility(View.VISIBLE);
                 bottomNavigationView.setVisibility(View.VISIBLE);
             }
@@ -86,5 +85,16 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminFe
     @Override
     public void onSurveyManagementClicked() {
         loadFragment(new AdminSurveyManagementFragment(), false);
+    }
+
+    @Override
+    public void onLeaveManagementClicked() {
+        loadFragment(new AdminLeaveCoursesFragment(), false);
+    }
+
+    // THÊM PHƯƠNG THỨC NÀY
+    @Override
+    public void onScheduleManagementClicked() {
+        loadFragment(new AdminScheduleCourseSelectionFragment(), false);
     }
 }

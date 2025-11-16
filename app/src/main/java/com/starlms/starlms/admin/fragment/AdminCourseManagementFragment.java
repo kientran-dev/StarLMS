@@ -8,8 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -66,7 +66,6 @@ public class AdminCourseManagementFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Setup Toolbar
         MaterialToolbar toolbar = view.findViewById(R.id.toolbar_course_management);
         toolbar.setNavigationOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
 
@@ -76,7 +75,17 @@ public class AdminCourseManagementFragment extends Fragment {
         adapter = new AdminCourseAdapter();
         recyclerView.setAdapter(adapter);
 
-        adapter.setOnItemInteractionListener(this::showOptionsDialog);
+        adapter.setOnItemInteractionListener(new AdminCourseAdapter.OnItemInteractionListener() {
+            @Override
+            public void onItemClick(CourseWithTeacher courseWithTeacher) {
+                // No action
+            }
+
+            @Override
+            public void onItemLongClick(CourseWithTeacher courseWithTeacher) {
+                showOptionsDialog(courseWithTeacher);
+            }
+        });
 
         FloatingActionButton fabAdd = view.findViewById(R.id.fab_add_course);
         fabAdd.setOnClickListener(v -> showCourseDialog(null));
@@ -133,46 +142,47 @@ public class AdminCourseManagementFragment extends Fragment {
 
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.admin_dialog_add_update_course, null);
         final EditText etName = dialogView.findViewById(R.id.et_course_name);
-        final Spinner spinnerType = dialogView.findViewById(R.id.spinner_course_type);
-        final Spinner spinnerTeacher = dialogView.findViewById(R.id.spinner_course_teacher);
+        final AutoCompleteTextView spinnerType = dialogView.findViewById(R.id.spinner_course_type);
+        final AutoCompleteTextView spinnerTeacher = dialogView.findViewById(R.id.spinner_course_teacher);
         builder.setView(dialogView);
 
-        // Setup Spinners
+        // Setup Dropdowns
         ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.course_types, android.R.layout.simple_spinner_item);
-        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                R.array.course_types, android.R.layout.simple_spinner_dropdown_item);
         spinnerType.setAdapter(typeAdapter);
 
         List<String> teacherNames = teacherList.stream().map(Teacher::getName).collect(Collectors.toList());
-        ArrayAdapter<String> teacherAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, teacherNames);
-        teacherAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> teacherAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, teacherNames);
         spinnerTeacher.setAdapter(teacherAdapter);
 
         if (isUpdate) {
             Course course = courseWithTeacher.getCourse();
             etName.setText(course.getName());
-            spinnerType.setSelection(course.getType().equalsIgnoreCase("online") ? 0 : 1);
-
-            // Find and set selected teacher
-            for (int i = 0; i < teacherList.size(); i++) {
-                if (teacherList.get(i).getTeacherId() == course.getTeacherId()) {
-                    spinnerTeacher.setSelection(i);
-                    break;
-                }
+            spinnerType.setText(course.getType(), false);
+            if (courseWithTeacher.getTeacher() != null) {
+                spinnerTeacher.setText(courseWithTeacher.getTeacher().getName(), false);
             }
         }
 
         builder.setPositiveButton(isUpdate ? "Cập Nhật" : "Thêm", (dialog, which) -> {
             String name = etName.getText().toString().trim();
-            String type = spinnerType.getSelectedItem().toString();
-            int selectedTeacherPosition = spinnerTeacher.getSelectedItemPosition();
+            String type = spinnerType.getText().toString();
+            String selectedTeacherName = spinnerTeacher.getText().toString();
 
-            if (TextUtils.isEmpty(name) || teacherList.isEmpty()) {
-                Toast.makeText(getContext(), "Vui lòng nhập tên và đảm bảo có giảng viên", Toast.LENGTH_SHORT).show();
+            if (TextUtils.isEmpty(name) || TextUtils.isEmpty(type) || TextUtils.isEmpty(selectedTeacherName)) {
+                Toast.makeText(getContext(), "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            Teacher selectedTeacher = teacherList.get(selectedTeacherPosition);
+            Teacher selectedTeacher = teacherList.stream()
+                    .filter(t -> t.getName().equals(selectedTeacherName))
+                    .findFirst()
+                    .orElse(null);
+
+            if (selectedTeacher == null) {
+                Toast.makeText(getContext(), "Giảng viên không hợp lệ", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             executorService.execute(() -> {
                 if (isUpdate) {

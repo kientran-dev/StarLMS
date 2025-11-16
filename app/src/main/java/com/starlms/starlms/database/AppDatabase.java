@@ -9,27 +9,35 @@ import androidx.room.RoomDatabase;
 import com.starlms.starlms.dao.AttendanceDao;
 import com.starlms.starlms.dao.CourseDao;
 import com.starlms.starlms.dao.GradeDao;
+import com.starlms.starlms.dao.LeaveRequestDao;
 import com.starlms.starlms.dao.MessageDao;
 import com.starlms.starlms.dao.NotificationDao;
 import com.starlms.starlms.dao.QuestionDao;
 import com.starlms.starlms.dao.SessionDao;
 import com.starlms.starlms.dao.SurveyDao;
+import com.starlms.starlms.dao.SurveyResponseDao;
 import com.starlms.starlms.dao.TeacherDao;
 import com.starlms.starlms.dao.TestDao;
+import com.starlms.starlms.dao.UserCourseCrossRefDao;
 import com.starlms.starlms.dao.UserDao;
+import com.starlms.starlms.dao.UserSurveyCompletionDao;
 import com.starlms.starlms.entity.Attendance;
 import com.starlms.starlms.entity.Course;
 import com.starlms.starlms.entity.Grade;
+import com.starlms.starlms.entity.LeaveRequest;
 import com.starlms.starlms.entity.Message;
 import com.starlms.starlms.entity.Notification;
 import com.starlms.starlms.entity.Question;
 import com.starlms.starlms.entity.Session;
 import com.starlms.starlms.entity.Survey;
+import com.starlms.starlms.entity.SurveyResponse;
 import com.starlms.starlms.entity.Teacher;
 import com.starlms.starlms.entity.Test;
 import com.starlms.starlms.entity.User;
+import com.starlms.starlms.entity.UserCourseCrossRef;
+import com.starlms.starlms.entity.UserSurveyCompletion;
 
-@Database(entities = {User.class, Course.class, Session.class, Attendance.class, Test.class, Grade.class, Question.class, Teacher.class, Survey.class, Notification.class, Message.class}, version = 13, exportSchema = false)
+@Database(entities = {User.class, Course.class, Session.class, Attendance.class, Test.class, Grade.class, Question.class, Teacher.class, Survey.class, Notification.class, Message.class, UserSurveyCompletion.class, SurveyResponse.class, LeaveRequest.class, UserCourseCrossRef.class}, version = 20, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract CourseDao courseDao();
@@ -42,6 +50,10 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract SurveyDao surveyDao();
     public abstract NotificationDao notificationDao();
     public abstract MessageDao messageDao();
+    public abstract UserSurveyCompletionDao userSurveyCompletionDao();
+    public abstract SurveyResponseDao surveyResponseDao();
+    public abstract LeaveRequestDao leaveRequestDao();
+    public abstract UserCourseCrossRefDao userCourseCrossRefDao();
 
     private static volatile AppDatabase INSTANCE;
 
@@ -51,7 +63,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "starlms_database")
-                            .fallbackToDestructiveMigration() // THÊM LẠI DÒNG NÀY
+                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }

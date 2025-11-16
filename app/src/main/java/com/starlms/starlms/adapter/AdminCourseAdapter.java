@@ -60,6 +60,13 @@ public class AdminCourseAdapter extends RecyclerView.Adapter<AdminCourseAdapter.
             textViewType = itemView.findViewById(R.id.tv_course_type);
             textViewTeacher = itemView.findViewById(R.id.tv_course_teacher);
 
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    listener.onItemClick(courseList.get(position));
+                }
+            });
+
             itemView.setOnLongClickListener(v -> {
                 int position = getAdapterPosition();
                 if (listener != null && position != RecyclerView.NO_POSITION) {
@@ -72,6 +79,7 @@ public class AdminCourseAdapter extends RecyclerView.Adapter<AdminCourseAdapter.
     }
 
     public interface OnItemInteractionListener {
+        void onItemClick(CourseWithTeacher courseWithTeacher);
         void onItemLongClick(CourseWithTeacher courseWithTeacher);
     }
 

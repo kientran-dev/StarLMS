@@ -21,6 +21,8 @@ public class AdminFeaturesFragment extends Fragment {
         void onTeacherManagementClicked();
         void onCourseManagementClicked();
         void onSurveyManagementClicked();
+        void onLeaveManagementClicked();
+        void onScheduleManagementClicked(); // THÊM DÒNG NÀY
     }
 
     @Override
@@ -62,6 +64,24 @@ public class AdminFeaturesFragment extends Fragment {
             }
         });
 
+        // 3. Quản lý Lịch học
+        View featureSchedule = view.findViewById(R.id.feature_tasks);
+        ((TextView) featureSchedule.findViewById(R.id.feature_name)).setText("QL Lịch học");
+        featureSchedule.setOnClickListener(v -> {
+            if (mListener != null) {
+                mListener.onScheduleManagementClicked();
+            }
+        });
+
+        // 4. Quản lý Đơn nghỉ
+        View featureLeave = view.findViewById(R.id.feature_schedule);
+        ((TextView) featureLeave.findViewById(R.id.feature_name)).setText("QL Đơn nghỉ");
+        featureLeave.setOnClickListener(v -> {
+            if (mListener != null) {
+                mListener.onLeaveManagementClicked();
+            }
+        });
+
         // 6. Quản lý Khảo sát
         View featureSurvey = view.findViewById(R.id.feature_survey);
         ((TextView) featureSurvey.findViewById(R.id.feature_name)).setText("QL Khảo sát");
@@ -72,12 +92,6 @@ public class AdminFeaturesFragment extends Fragment {
         });
 
         // ... Các ô chức năng khác
-        View featureTasks = view.findViewById(R.id.feature_tasks);
-        ((TextView) featureTasks.findViewById(R.id.feature_name)).setText("QL Nhiệm vụ");
-
-        View featureSchedule = view.findViewById(R.id.feature_schedule);
-        ((TextView) featureSchedule.findViewById(R.id.feature_name)).setText("QL Lịch trình");
-
         View featureStudentInfo = view.findViewById(R.id.feature_student_info);
         ((TextView) featureStudentInfo.findViewById(R.id.feature_name)).setText("TT Sinh viên");
     }

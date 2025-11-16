@@ -9,18 +9,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.starlms.starlms.database.AppDatabase;
 import com.starlms.starlms.databinding.ActivityRequestLeaveBinding;
 import com.starlms.starlms.entity.Attendance;
+import com.starlms.starlms.entity.LeaveRequest;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class RequestLeaveActivity extends AppCompatActivity {
 
-    public static final String EXTRA_SESSION_ID = "EXTRA_SESSION_ID";
-    public static final String EXTRA_USER_ID = "EXTRA_USER_ID"; // Assuming you have a way to get current user ID
+    public static final String EXTRA_COURSE_ID = "EXTRA_COURSE_ID";
+    public static final String EXTRA_SESSION_ID = "EXTRA_SESSION_ID"; // THÊM DÒNG NÀY
+    public static final String EXTRA_USER_ID = "EXTRA_USER_ID";
 
     private ActivityRequestLeaveBinding binding;
-    private int sessionId;
-    private int userId;
+    private long courseId;
+    private int sessionId; // THÊM DÒNG NÀY
+    private long userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +31,9 @@ public class RequestLeaveActivity extends AppCompatActivity {
         binding = ActivityRequestLeaveBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        sessionId = getIntent().getIntExtra(EXTRA_SESSION_ID, -1);
-        // For now, we'll hardcode the user ID to 1 as we don't have a login system yet.
-        userId = 1;
+        courseId = getIntent().getLongExtra(EXTRA_COURSE_ID, -1);
+        sessionId = getIntent().getIntExtra(EXTRA_SESSION_ID, -1); // THÊM DÒNG NÀY
+        userId = 1; // TODO: Replace with actual logged-in user ID
 
         setSupportActionBar(binding.toolbarRequestLeave);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -50,8 +53,8 @@ public class RequestLeaveActivity extends AppCompatActivity {
     }
 
     private void sendRequest() {
-        if (sessionId == -1 || userId == -1) {
-            Toast.makeText(this, "Lỗi: Không tìm thấy thông tin buổi học", Toast.LENGTH_SHORT).show();
+        if (courseId == -1 || sessionId == -1 || userId == -1) {
+            Toast.makeText(this, "Lỗi: Thiếu thông tin khóa học hoặc buổi học", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -62,19 +65,20 @@ public class RequestLeaveActivity extends AppCompatActivity {
             fullReason = notes;
         }
 
-        Attendance attendance = new Attendance();
-        attendance.setSessionId(sessionId);
-        attendance.setUserId(userId);
-        attendance.setStatus("LEAVE_REQUESTED");
-        attendance.setReason(fullReason);
+        // SỬA Ở ĐÂY: Tạo cả 2 object
+        LeaveRequest leaveRequest = new LeaveRequest(0, courseId, userId, fullReason, System.currentTimeMillis(), "Chưa duyệt");
+        Attendance attendanceRecord = new Attendance(0, (int) userId, sessionId, "LEAVE_REQUESTED", fullReason);
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
-            db.attendanceDao().insert(attendance);
+            // Ghi vào cả 2 bảng
+            db.leaveRequestDao().insert(leaveRequest);
+            db.attendanceDao().insert(attendanceRecord);
+            
             runOnUiThread(() -> {
                 Toast.makeText(this, "Gửi yêu cầu thành công", Toast.LENGTH_SHORT).show();
-                finish(); // Go back to the previous screen
+                finish(); // Quay lại màn hình trước
             });
         });
     }
