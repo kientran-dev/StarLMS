@@ -37,8 +37,8 @@
             android:textAppearance="?attr/textAppearanceBody1"
             tools:text="Cảm ơn bạn đã dành thời gian. Vui lòng cho chúng tôi biết cảm nhận của bạn về chất lượng dịch vụ tại trung tâm trong thời gian qua." />
 
-        <!-- This is a placeholder for actual survey questions -->
         <EditText
+            android:id="@+id/et_survey_feedback" 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"

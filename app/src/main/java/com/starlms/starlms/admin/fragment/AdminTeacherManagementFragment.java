@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.starlms.starlms.R;
 import com.starlms.starlms.adapter.AdminTeacherAdapter;
@@ -53,6 +54,12 @@ public class AdminTeacherManagementFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Setup Toolbar
+        MaterialToolbar toolbar = view.findViewById(R.id.toolbar_teacher_management);
+        toolbar.setNavigationOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager().popBackStack();
+        });
 
         recyclerView = view.findViewById(R.id.recycler_view_teachers);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -97,7 +104,7 @@ public class AdminTeacherManagementFragment extends Fragment {
                 .setNegativeButton("Hủy", null)
                 .show();
     }
-
+    
     private void deleteTeacher(final Teacher teacher) {
         executorService.execute(() -> {
             teacherDao.delete(teacher);

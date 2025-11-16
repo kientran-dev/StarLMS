@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
                 long teacher2Id = db.teacherDao().insertAndGetId(teacher2);
 
                 // --- COURSE 1: IELTS (Offline) ---
-                Course course1 = new Course(0, "IELTS Foundation", "offline");
+                Course course1 = new Course(0, "IELTS Foundation", "offline", (int) teacher1Id);
                 long course1Id = db.courseDao().insertAndGetId(course1);
 
                 // Sessions for Course 1 (Schedule)
@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
                 Question q2_t2_c1 = new Question(0, "According to the passage, why did the event occur?", "Reason A", "Reason B", "Reason C", "Reason D", 3, (int) test2_c1_Id);
 
                 // --- COURSE 2: TOEIC (Online) ---
-                Course course2 = new Course(0, "TOEIC Target 550", "online");
+                Course course2 = new Course(0, "TOEIC Target 550", "online", (int) teacher2Id);
                 long course2Id = db.courseDao().insertAndGetId(course2);
 
                 // Sessions for Course 2 (Video Links)

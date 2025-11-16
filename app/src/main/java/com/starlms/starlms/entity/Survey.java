@@ -15,16 +15,15 @@ public class Survey {
     private int surveyId;
     private String title;
     private String description;
-    private boolean isCompleted;
+    private String status; // "Chưa đăng" hoặc "Đã đăng"
 
     // Room uses this constructor
     public Survey() {}
 
-    // This constructor is ignored by Room and used for creating new instances
     @Ignore
     public Survey(String title, String description) {
         this.title = title;
         this.description = description;
-        this.isCompleted = false; // Default status
+        this.status = "Chưa đăng"; // Default status
     }
 }

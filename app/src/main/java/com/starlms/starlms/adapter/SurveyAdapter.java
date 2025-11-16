@@ -62,14 +62,9 @@ public class SurveyAdapter extends RecyclerView.Adapter<SurveyAdapter.SurveyView
             binding.tvSurveyTitle.setText(survey.getTitle());
             binding.tvSurveyDescription.setText(survey.getDescription());
 
-            if (survey.isCompleted()) {
-                binding.tvSurveyStatus.setVisibility(View.VISIBLE);
-                // Make the item look disabled or less prominent
-                itemView.setAlpha(0.6f);
-            } else {
-                binding.tvSurveyStatus.setVisibility(View.GONE);
-                itemView.setAlpha(1.0f);
-            }
+            // Logic cũ đã được xóa bỏ vì trường isCompleted không còn tồn tại
+            binding.tvSurveyStatus.setVisibility(View.GONE);
+            itemView.setAlpha(1.0f);
 
             itemView.setOnClickListener(v -> listener.onSurveyClick(survey));
         }

@@ -1,0 +1,6 @@
+<resources>
+    <string-array name="course_types">
+        <item>Online</item>
+        <item>Offline</item>
+    </string-array>
+</resources>

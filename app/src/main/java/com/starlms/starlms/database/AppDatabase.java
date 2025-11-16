@@ -29,7 +29,7 @@ import com.starlms.starlms.entity.Teacher;
 import com.starlms.starlms.entity.Test;
 import com.starlms.starlms.entity.User;
 
-@Database(entities = {User.class, Course.class, Session.class, Attendance.class, Test.class, Grade.class, Question.class, Teacher.class, Survey.class, Notification.class, Message.class}, version = 14, exportSchema = false)
+@Database(entities = {User.class, Course.class, Session.class, Attendance.class, Test.class, Grade.class, Question.class, Teacher.class, Survey.class, Notification.class, Message.class}, version = 13, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract CourseDao courseDao();
@@ -51,7 +51,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "starlms_database")
-                            .fallbackToDestructiveMigration()
+                            .fallbackToDestructiveMigration() // THÊM LẠI DÒNG NÀY
                             .build();
                 }
             }

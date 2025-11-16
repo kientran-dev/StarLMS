@@ -23,12 +23,10 @@ public class SurveyActivity extends AppCompatActivity implements SurveyAdapter.O
     private ActivitySurveysBinding binding;
     private SurveyAdapter adapter;
 
-    // Launcher to get the result from SurveyDetailsActivity
     private final ActivityResultLauncher<Intent> surveyDetailsLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
-                    // If a survey was completed, reload the list
                     loadSurveys();
                 }
             });
@@ -55,7 +53,8 @@ public class SurveyActivity extends AppCompatActivity implements SurveyAdapter.O
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
-            List<Survey> surveys = db.surveyDao().getAllSurveys();
+
+            List<Survey> surveys = db.surveyDao().getSurveysByStatus("Đã đăng");
 
             runOnUiThread(() -> {
                 if (adapter == null) {
@@ -70,10 +69,7 @@ public class SurveyActivity extends AppCompatActivity implements SurveyAdapter.O
 
     @Override
     public void onSurveyClick(Survey survey) {
-        if (survey.isCompleted()) {
-            // Optionally, show a toast or do nothing if the survey is already completed
-            return;
-        }
+
         Intent intent = new Intent(this, SurveyDetailsActivity.class);
         intent.putExtra(SurveyDetailsActivity.EXTRA_SURVEY_ID, survey.getSurveyId());
         surveyDetailsLauncher.launch(intent);

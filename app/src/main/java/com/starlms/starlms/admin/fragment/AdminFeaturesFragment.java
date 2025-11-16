@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,9 +17,10 @@ public class AdminFeaturesFragment extends Fragment {
 
     private OnFeatureClickListener mListener;
 
-    // Interface để giao tiếp với Activity
     public interface OnFeatureClickListener {
         void onTeacherManagementClicked();
+        void onCourseManagementClicked();
+        void onSurveyManagementClicked();
     }
 
     @Override
@@ -44,37 +44,42 @@ public class AdminFeaturesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // --- Tùy chỉnh từng ô chức năng tại đây ---
-
         // 1. Quản lý Giảng viên
-        View featureTeacher = view.findViewById(R.id.feature_attendance); // ID của ô đầu tiên
+        View featureTeacher = view.findViewById(R.id.feature_attendance);
         ((TextView) featureTeacher.findViewById(R.id.feature_name)).setText("QL Giảng viên");
-        // ((ImageView) featureTeacher.findViewById(R.id.feature_icon)).setImageResource(R.drawable.ic_admin_teacher); // Ví dụ đổi icon
         featureTeacher.setOnClickListener(v -> {
             if (mListener != null) {
                 mListener.onTeacherManagementClicked();
             }
         });
 
-        // 2. Quản lý Điểm
-        View featureGrades = view.findViewById(R.id.feature_grades);
-        ((TextView) featureGrades.findViewById(R.id.feature_name)).setText("QL Điểm");
+        // 2. Quản lý Khóa học
+        View featureCourses = view.findViewById(R.id.feature_grades);
+        ((TextView) featureCourses.findViewById(R.id.feature_name)).setText("QL Khóa học");
+        featureCourses.setOnClickListener(v -> {
+            if (mListener != null) {
+                mListener.onCourseManagementClicked();
+            }
+        });
 
-        // 3. Quản lý Nhiệm vụ
+        // 6. Quản lý Khảo sát
+        View featureSurvey = view.findViewById(R.id.feature_survey);
+        ((TextView) featureSurvey.findViewById(R.id.feature_name)).setText("QL Khảo sát");
+        featureSurvey.setOnClickListener(v -> {
+            if (mListener != null) {
+                mListener.onSurveyManagementClicked();
+            }
+        });
+
+        // ... Các ô chức năng khác
         View featureTasks = view.findViewById(R.id.feature_tasks);
         ((TextView) featureTasks.findViewById(R.id.feature_name)).setText("QL Nhiệm vụ");
 
-        // 4. Quản lý Lịch trình
         View featureSchedule = view.findViewById(R.id.feature_schedule);
         ((TextView) featureSchedule.findViewById(R.id.feature_name)).setText("QL Lịch trình");
 
-        // 5. Thông tin Sinh viên
         View featureStudentInfo = view.findViewById(R.id.feature_student_info);
         ((TextView) featureStudentInfo.findViewById(R.id.feature_name)).setText("TT Sinh viên");
-
-        // 6. Khảo sát
-        View featureSurvey = view.findViewById(R.id.feature_survey);
-        ((TextView) featureSurvey.findViewById(R.id.feature_name)).setText("Khảo sát");
     }
 
     @Override

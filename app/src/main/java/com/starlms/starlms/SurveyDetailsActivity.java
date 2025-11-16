@@ -1,7 +1,5 @@
 package com.starlms.starlms;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -10,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.starlms.starlms.database.AppDatabase;
 import com.starlms.starlms.databinding.ActivitySurveyDetailsBinding;
 import com.starlms.starlms.entity.Survey;
+import com.starlms.starlms.entity.SurveyResponse;
+import com.starlms.starlms.entity.UserSurveyCompletion;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,7 +19,7 @@ public class SurveyDetailsActivity extends AppCompatActivity {
     public static final String EXTRA_SURVEY_ID = "SURVEY_ID";
     private ActivitySurveyDetailsBinding binding;
     private int surveyId;
-    private Survey currentSurvey;
+    private long currentUserId = 1; // TODO: Replace with actual logged-in user ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,7 @@ public class SurveyDetailsActivity extends AppCompatActivity {
 
         surveyId = getIntent().getIntExtra(EXTRA_SURVEY_ID, -1);
         if (surveyId == -1) {
-            finish(); // Cannot proceed without a survey ID
+            finish();
             return;
         }
 
@@ -46,33 +46,51 @@ public class SurveyDetailsActivity extends AppCompatActivity {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
-            currentSurvey = db.surveyDao().findById(surveyId);
+            Survey currentSurvey = db.surveyDao().findById(surveyId);
+            UserSurveyCompletion completion = db.userSurveyCompletionDao().getCompletion(currentUserId, surveyId);
 
             runOnUiThread(() -> {
                 if (currentSurvey != null) {
                     binding.tvSurveyDetailsTitle.setText(currentSurvey.getTitle());
                     binding.tvSurveyDetailsDescription.setText(currentSurvey.getDescription());
+                    if (completion != null) {
+                        disableForm();
+                    }
                 }
             });
         });
     }
 
     private void submitSurvey() {
-        if (currentSurvey == null) return;
-
-        currentSurvey.setCompleted(true);
+        String responseText = binding.etSurveyFeedback.getText().toString().trim();
+        if (responseText.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập phản hồi của bạn", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
-            db.surveyDao().updateSurvey(currentSurvey);
+            long submissionTime = System.currentTimeMillis();
+
+            // 1. Lưu câu trả lời với thời gian
+            SurveyResponse newResponse = new SurveyResponse(0, surveyId, currentUserId, responseText, submissionTime);
+            db.surveyResponseDao().insert(newResponse);
+
+            // 2. Đánh dấu là đã hoàn thành
+            UserSurveyCompletion newCompletion = new UserSurveyCompletion(currentUserId, surveyId);
+            db.userSurveyCompletionDao().insert(newCompletion);
 
             runOnUiThread(() -> {
-                Toast.makeText(this, "Khảo sát đã được gửi!", Toast.LENGTH_SHORT).show();
-                Intent resultIntent = new Intent();
-                setResult(Activity.RESULT_OK, resultIntent);
-                finish(); // Go back to the survey list
+                Toast.makeText(this, "Cảm ơn bạn đã gửi khảo sát!", Toast.LENGTH_SHORT).show();
+                disableForm();
             });
         });
+    }
+
+    private void disableForm() {
+        binding.etSurveyFeedback.setEnabled(false);
+        binding.btnSubmitSurvey.setEnabled(false);
+        binding.btnSubmitSurvey.setText("Đã khảo sát");
     }
 }

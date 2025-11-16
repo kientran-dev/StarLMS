@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".admin.fragment.AdminTeacherManagementFragment">
+    tools:context=".admin.fragment.AdminCourseManagementFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar_teacher_management"
+        android:id="@+id/toolbar_course_management"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        app:title="Quản lý Giảng viên"
+        app:title="Quản lý Khóa học"
         app:titleTextColor="@android:color/white"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:navigationIconTint="@android:color/white" />
@@ -22,21 +22,20 @@
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_teachers"
+            android:id="@+id/recycler_view_courses"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="8dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:listitem="@layout/admin_list_item_teacher" />
+            tools:listitem="@layout/admin_list_item_course" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_add_teacher"
+            android:id="@+id/fab_add_course"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="10dp"
-            android:contentDescription="Thêm Giảng Viên Mới"
+            android:layout_margin="16dp"
+            android:contentDescription="Thêm Khóa Học Mới"
             android:src="@android:drawable/ic_input_add" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
