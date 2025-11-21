@@ -11,11 +11,12 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.starlms.starlms.R;
+import com.starlms.starlms.admin.fragment.AdminAttendanceCourseSelectionFragment;
 import com.starlms.starlms.admin.fragment.AdminCourseManagementFragment;
 import com.starlms.starlms.admin.fragment.AdminDashboardFragment;
 import com.starlms.starlms.admin.fragment.AdminFeaturesFragment;
 import com.starlms.starlms.admin.fragment.AdminLeaveCoursesFragment;
-import com.starlms.starlms.admin.fragment.AdminScheduleCourseSelectionFragment; // THÊM IMPORT
+import com.starlms.starlms.admin.fragment.AdminScheduleCourseSelectionFragment;
 import com.starlms.starlms.admin.fragment.AdminSurveyManagementFragment;
 import com.starlms.starlms.admin.fragment.AdminTeacherManagementFragment;
 
@@ -92,9 +93,14 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminFe
         loadFragment(new AdminLeaveCoursesFragment(), false);
     }
 
-    // THÊM PHƯƠNG THỨC NÀY
     @Override
     public void onScheduleManagementClicked() {
         loadFragment(new AdminScheduleCourseSelectionFragment(), false);
+    }
+
+    // THÊM PHƯƠNG THỨC NÀY
+    @Override
+    public void onAttendanceManagementClicked() {
+        loadFragment(new AdminAttendanceCourseSelectionFragment(), false);
     }
 }

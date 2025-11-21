@@ -22,7 +22,8 @@ public class AdminFeaturesFragment extends Fragment {
         void onCourseManagementClicked();
         void onSurveyManagementClicked();
         void onLeaveManagementClicked();
-        void onScheduleManagementClicked(); // THÊM DÒNG NÀY
+        void onScheduleManagementClicked();
+        void onAttendanceManagementClicked(); // THÊM DÒNG NÀY
     }
 
     @Override
@@ -50,50 +51,43 @@ public class AdminFeaturesFragment extends Fragment {
         View featureTeacher = view.findViewById(R.id.feature_attendance);
         ((TextView) featureTeacher.findViewById(R.id.feature_name)).setText("QL Giảng viên");
         featureTeacher.setOnClickListener(v -> {
-            if (mListener != null) {
-                mListener.onTeacherManagementClicked();
-            }
+            if (mListener != null) mListener.onTeacherManagementClicked();
         });
 
         // 2. Quản lý Khóa học
         View featureCourses = view.findViewById(R.id.feature_grades);
         ((TextView) featureCourses.findViewById(R.id.feature_name)).setText("QL Khóa học");
         featureCourses.setOnClickListener(v -> {
-            if (mListener != null) {
-                mListener.onCourseManagementClicked();
-            }
+            if (mListener != null) mListener.onCourseManagementClicked();
         });
 
         // 3. Quản lý Lịch học
         View featureSchedule = view.findViewById(R.id.feature_tasks);
         ((TextView) featureSchedule.findViewById(R.id.feature_name)).setText("QL Lịch học");
         featureSchedule.setOnClickListener(v -> {
-            if (mListener != null) {
-                mListener.onScheduleManagementClicked();
-            }
+            if (mListener != null) mListener.onScheduleManagementClicked();
         });
 
         // 4. Quản lý Đơn nghỉ
         View featureLeave = view.findViewById(R.id.feature_schedule);
         ((TextView) featureLeave.findViewById(R.id.feature_name)).setText("QL Đơn nghỉ");
         featureLeave.setOnClickListener(v -> {
-            if (mListener != null) {
-                mListener.onLeaveManagementClicked();
-            }
+            if (mListener != null) mListener.onLeaveManagementClicked();
+        });
+
+        // 5. Quản lý Chuyên cần (MỚI)
+        View featureAttendance = view.findViewById(R.id.feature_student_info);
+        ((TextView) featureAttendance.findViewById(R.id.feature_name)).setText("QL Chuyên cần");
+        featureAttendance.setOnClickListener(v -> {
+            if (mListener != null) mListener.onAttendanceManagementClicked();
         });
 
         // 6. Quản lý Khảo sát
         View featureSurvey = view.findViewById(R.id.feature_survey);
         ((TextView) featureSurvey.findViewById(R.id.feature_name)).setText("QL Khảo sát");
         featureSurvey.setOnClickListener(v -> {
-            if (mListener != null) {
-                mListener.onSurveyManagementClicked();
-            }
+            if (mListener != null) mListener.onSurveyManagementClicked();
         });
-
-        // ... Các ô chức năng khác
-        View featureStudentInfo = view.findViewById(R.id.feature_student_info);
-        ((TextView) featureStudentInfo.findViewById(R.id.feature_name)).setText("TT Sinh viên");
     }
 
     @Override

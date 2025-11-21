@@ -19,4 +19,7 @@ public interface AttendanceDao {
 
     @Query("SELECT T1.* FROM attendance AS T1 INNER JOIN sessions AS T2 ON T1.sessionId = T2.sessionId WHERE T1.userId = :userId AND T2.courseOwnerId = :courseId")
     List<Attendance> getAttendanceForUserInCourse(int userId, int courseId);
+
+    @Query("SELECT T1.* FROM attendance AS T1 INNER JOIN sessions AS T2 ON T1.sessionId = T2.sessionId WHERE T2.courseOwnerId = :courseId")
+    List<Attendance> getAttendanceForCourse(long courseId);
 }

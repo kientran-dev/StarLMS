@@ -13,17 +13,15 @@ import com.starlms.starlms.R;
 import com.starlms.starlms.model.CourseWithTeacher;
 
 import java.util.List;
-import java.util.Set;
 
 public class CourseRegistrationAdapter extends RecyclerView.Adapter<CourseRegistrationAdapter.RegistrationViewHolder> {
 
-    private List<CourseWithTeacher> allCourses;
-    private Set<Integer> registeredCourseIds;
+    private List<CourseWithTeacher> courses;
     private OnRegisterClickListener listener;
 
-    public CourseRegistrationAdapter(List<CourseWithTeacher> allCourses, Set<Integer> registeredCourseIds, OnRegisterClickListener listener) {
-        this.allCourses = allCourses;
-        this.registeredCourseIds = registeredCourseIds;
+    // SỬA Ở ĐÂY: Bỏ Set<Integer> khỏi constructor
+    public CourseRegistrationAdapter(List<CourseWithTeacher> courses, OnRegisterClickListener listener) {
+        this.courses = courses;
         this.listener = listener;
     }
 
@@ -41,7 +39,7 @@ public class CourseRegistrationAdapter extends RecyclerView.Adapter<CourseRegist
 
     @Override
     public void onBindViewHolder(@NonNull RegistrationViewHolder holder, int position) {
-        CourseWithTeacher currentItem = allCourses.get(position);
+        CourseWithTeacher currentItem = courses.get(position);
         holder.courseName.setText(currentItem.getCourse().getName());
 
         if (currentItem.getTeacher() != null) {
@@ -50,24 +48,15 @@ public class CourseRegistrationAdapter extends RecyclerView.Adapter<CourseRegist
             holder.teacherName.setText("Chưa có giảng viên");
         }
 
-        if (registeredCourseIds.contains(currentItem.getCourse().getCourseId())) {
-            holder.registerButton.setText("Đã đăng ký");
-            holder.registerButton.setEnabled(false);
-        } else {
-            holder.registerButton.setText("Đăng ký");
-            holder.registerButton.setEnabled(true);
-            holder.registerButton.setOnClickListener(v -> listener.onRegisterClick(currentItem));
-        }
+        // SỬA Ở ĐÂY: Luôn hiển thị nút Đăng ký vì danh sách này chỉ chứa các khóa chưa đăng ký
+        holder.registerButton.setText("Đăng ký");
+        holder.registerButton.setEnabled(true);
+        holder.registerButton.setOnClickListener(v -> listener.onRegisterClick(currentItem));
     }
 
     @Override
     public int getItemCount() {
-        return allCourses.size();
-    }
-
-    public void updateRegistrationStatus(int courseId) {
-        registeredCourseIds.add(courseId);
-        notifyDataSetChanged();
+        return courses.size();
     }
 
     static class RegistrationViewHolder extends RecyclerView.ViewHolder {

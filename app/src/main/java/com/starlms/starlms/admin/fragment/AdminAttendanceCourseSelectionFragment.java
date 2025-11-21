@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class AdminScheduleCourseSelectionFragment extends Fragment {
+public class AdminAttendanceCourseSelectionFragment extends Fragment {
 
     private CourseDao courseDao;
     private RecyclerView recyclerView;
@@ -45,17 +45,17 @@ public class AdminScheduleCourseSelectionFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.admin_fragment_schedule_course_selection, container, false);
+        return inflater.inflate(R.layout.admin_fragment_attendance_course_selection, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        MaterialToolbar toolbar = view.findViewById(R.id.toolbar_schedule_course_selection);
+        MaterialToolbar toolbar = view.findViewById(R.id.toolbar_attendance_course_selection);
         toolbar.setNavigationOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
 
-        recyclerView = view.findViewById(R.id.recycler_view_schedule_courses);
+        recyclerView = view.findViewById(R.id.recycler_view_attendance_courses);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         adapter = new AdminCourseAdapter();
@@ -64,11 +64,11 @@ public class AdminScheduleCourseSelectionFragment extends Fragment {
         adapter.setOnItemInteractionListener(new AdminCourseAdapter.OnItemInteractionListener() {
             @Override
             public void onItemClick(CourseWithTeacher courseWithTeacher) {
+                // SỬA Ở ĐÂY: Điều hướng đến màn hình thống kê
                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, AdminSessionManagementFragment.newInstance(
+                transaction.replace(R.id.fragment_container, AdminAttendanceStatFragment.newInstance(
                         courseWithTeacher.getCourse().getCourseId(),
-                        courseWithTeacher.getCourse().getName(),
-                        courseWithTeacher.getCourse().getType()
+                        courseWithTeacher.getCourse().getName()
                 ));
                 transaction.addToBackStack(null);
                 transaction.commit();

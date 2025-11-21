@@ -22,6 +22,7 @@ public class AdminSessionAdapter extends RecyclerView.Adapter<AdminSessionAdapte
     private List<Session> sessionList = new ArrayList<>();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
     private OnItemInteractionListener listener;
+    private String courseType;
 
     public interface OnItemInteractionListener {
         void onItemLongClick(Session session);
@@ -29,6 +30,11 @@ public class AdminSessionAdapter extends RecyclerView.Adapter<AdminSessionAdapte
 
     public void setOnItemInteractionListener(OnItemInteractionListener listener) {
         this.listener = listener;
+    }
+
+    // Constructor updated to accept courseType
+    public AdminSessionAdapter(String courseType) {
+        this.courseType = courseType;
     }
 
     @NonNull
@@ -44,8 +50,13 @@ public class AdminSessionAdapter extends RecyclerView.Adapter<AdminSessionAdapte
         Session currentSession = sessionList.get(position);
 
         holder.sessionName.setText(currentSession.getTitle());
-        // SỬA Ở ĐÂY: Dùng getSessionDate() và getClassroom()
-        holder.location.setText("Địa điểm: " + currentSession.getClassroom());
+        
+        // SỬA Ở ĐÂY: Logic hiển thị Link hoặc Địa điểm
+        if ("online".equalsIgnoreCase(courseType)) {
+            holder.location.setText("Link: " + currentSession.getClassroom());
+        } else {
+            holder.location.setText("Địa điểm: " + currentSession.getClassroom());
+        }
 
         if (currentSession.getSessionDate() > 0) {
             holder.dateTime.setText(dateFormat.format(new Date(currentSession.getSessionDate())));
