@@ -91,7 +91,7 @@ public class CoursesActivity extends AppCompatActivity implements CourseAdapter.
                     intent = new Intent(this, RequestLeaveActivity.class); // Or whatever activity is for attendance
                     break;
                 case MODE_GRADES:
-                    intent = new Intent(this, GradesActivity.class);
+                    intent = new Intent(this, ExamsActivity.class);
                     break;
                 case MODE_ASSIGNMENTS:
                     intent = new Intent(this, AssignmentsActivity.class);

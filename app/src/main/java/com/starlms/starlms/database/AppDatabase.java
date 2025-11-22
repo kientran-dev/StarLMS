@@ -2,12 +2,16 @@ package com.starlms.starlms.database;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.starlms.starlms.dao.AttendanceDao;
 import com.starlms.starlms.dao.CourseDao;
+import com.starlms.starlms.dao.ExamDao;
 import com.starlms.starlms.dao.GradeDao;
 import com.starlms.starlms.dao.LeaveRequestDao;
 import com.starlms.starlms.dao.MessageDao;
@@ -23,6 +27,7 @@ import com.starlms.starlms.dao.UserDao;
 import com.starlms.starlms.dao.UserSurveyCompletionDao;
 import com.starlms.starlms.entity.Attendance;
 import com.starlms.starlms.entity.Course;
+import com.starlms.starlms.entity.Exam;
 import com.starlms.starlms.entity.Grade;
 import com.starlms.starlms.entity.LeaveRequest;
 import com.starlms.starlms.entity.Message;
@@ -37,7 +42,7 @@ import com.starlms.starlms.entity.User;
 import com.starlms.starlms.entity.UserCourseCrossRef;
 import com.starlms.starlms.entity.UserSurveyCompletion;
 
-@Database(entities = {User.class, Course.class, Session.class, Attendance.class, Test.class, Grade.class, Question.class, Teacher.class, Survey.class, Notification.class, Message.class, UserSurveyCompletion.class, SurveyResponse.class, LeaveRequest.class, UserCourseCrossRef.class}, version = 21, exportSchema = false)
+@Database(entities = {User.class, Course.class, Session.class, Attendance.class, Test.class, Grade.class, Question.class, Teacher.class, Survey.class, Notification.class, Message.class, UserSurveyCompletion.class, SurveyResponse.class, LeaveRequest.class, UserCourseCrossRef.class, Exam.class}, version = 23, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract CourseDao courseDao();
@@ -54,8 +59,18 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract SurveyResponseDao surveyResponseDao();
     public abstract LeaveRequestDao leaveRequestDao();
     public abstract UserCourseCrossRefDao userCourseCrossRefDao();
+    public abstract ExamDao examDao();
 
     private static volatile AppDatabase INSTANCE;
+
+    static final Migration MIGRATION_22_23 = new Migration(22, 23) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `exams` (`examId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `examName` TEXT, `score` REAL, `userId` INTEGER NOT NULL, `courseId` INTEGER NOT NULL, FOREIGN KEY(`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE, FOREIGN KEY(`courseId`) REFERENCES `courses`(`courseId`) ON DELETE CASCADE)");
+            database.execSQL("CREATE INDEX IF NOT EXISTS `index_exams_userId` ON `exams` (`userId`)");
+            database.execSQL("CREATE INDEX IF NOT EXISTS `index_exams_courseId` ON `exams` (`courseId`)");
+        }
+    };
 
     public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
@@ -64,7 +79,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "starlms_database")
                             .createFromAsset("starlms_database.db")
-                            .fallbackToDestructiveMigration()
+                            .addMigrations(MIGRATION_22_23)
                             .build();
                 }
             }

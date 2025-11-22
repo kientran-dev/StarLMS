@@ -20,10 +20,14 @@ import com.starlms.starlms.adapter.NotificationAdapter;
 import com.starlms.starlms.database.AppDatabase;
 import com.starlms.starlms.databinding.ActivityMainBinding;
 import com.starlms.starlms.databinding.ItemFeatureBinding;
+import com.starlms.starlms.entity.Grade;
+import com.starlms.starlms.entity.Notification;
 import com.starlms.starlms.entity.Question;
 import com.starlms.starlms.entity.Test;
 import com.starlms.starlms.entity.User;
 
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -47,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
         }
 
         loadUserProfile();
-        addSampleQuizData();
+        seedDatabase();
 
         // Setup Toolbar icons
         binding.profileIcon.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
@@ -105,12 +109,18 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
         setupNotificationSlider();
     }
 
-    private void addSampleQuizData() {
+    private void seedDatabase() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
 
-            // Check if data already exists
+            // --- Seed Notifications ---
+            if (db.notificationDao().getAllOrderedByIdDesc().isEmpty()) {
+                db.notificationDao().insert(new Notification("Chào mừng bạn đã đến với hệ thống học tập StarLMS. Hãy khám phá các tính năng ngay!"));
+                db.notificationDao().insert(new Notification("Lịch học môn Phát triển ứng dụng TMĐT đã được cập nhật. Vui lòng kiểm tra lại."));
+            }
+
+            // --- Seed Tests, Questions, and Grades ---
             if (db.testDao().getTestsForCourse(1).isEmpty()) {
                 // Test 1 for Course 1
                 Test test1 = new Test(0, "Bài kiểm tra giữa kỳ", "Kiểm tra kiến thức cơ bản", 100, 1);
@@ -119,6 +129,9 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
                 db.questionDao().insert(new Question(0, "Đâu là thủ đô của Việt Nam?", "Hà Nội", "Đà Nẵng", "TP.HCM", "Hải Phòng", 1, (int)test1Id));
                 db.questionDao().insert(new Question(0, "Ngôn ngữ lập trình chính cho Android là gì?", "Kotlin", "Swift", "Java", "C#", 1, (int)test1Id));
                 db.questionDao().insert(new Question(0, "Đâu là một widget trong Android?", "TextView", "Array", "String", "Integer", 1, (int)test1Id));
+
+                // Add a grade for user 1 on test 1
+                db.gradeDao().insert(new Grade(0, 85.5, 1, (int)test1Id));
 
                 // Test 2 for Course 1
                 Test test2 = new Test(0, "Bài kiểm tra cuối kỳ", "Kiểm tra kiến thức tổng hợp", 100, 1);
@@ -184,15 +197,21 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
     @Override
     protected void onResume() {
         super.onResume();
-        if (sliderRunnable != null) {
-            sliderHandler.postDelayed(sliderRunnable, 4000);
-        }
+        // Start the slider when the activity is resumed
+        startSlider();
         binding.bottomNavigation.getMenu().findItem(R.id.navigation_home).setChecked(true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Stop the slider when the activity is paused
+        stopSlider();
     }
 
     private void setupFeature(ItemFeatureBinding featureBinding, String text, int iconResId) {
         featureBinding.featureName.setText(text);
-        if (iconResId != -1) {
+        if (iconResId != 0) { // Corrected this line
             featureBinding.featureIcon.setImageResource(iconResId);
         } else {
             featureBinding.featureIcon.setImageResource(android.R.drawable.sym_def_app_icon);
@@ -200,16 +219,61 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
     }
 
     private void setupNotificationSlider() {
-        // ... (existing code)
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+            List<Notification> notifications = db.notificationDao().getAllOrderedByIdDesc();
+            runOnUiThread(() -> {
+                notificationAdapter = new NotificationAdapter(notifications, this);
+                binding.viewPagerNotifications.setAdapter(notificationAdapter);
+
+                new TabLayoutMediator(binding.tabLayoutDots, binding.viewPagerNotifications, (tab, position) -> {
+                    // No-op
+                }).attach();
+
+                if (notifications.size() > 1) {
+                    sliderRunnable = () -> {
+                        int currentItem = binding.viewPagerNotifications.getCurrentItem();
+                        int nextItem = currentItem == notificationAdapter.getItemCount() - 1 ? 0 : currentItem + 1;
+                        binding.viewPagerNotifications.setCurrentItem(nextItem, true);
+                        // Post the runnable again for a continuous loop
+                        sliderHandler.postDelayed(sliderRunnable, 4000);
+                    };
+                    // Start the auto-scroll
+                    startSlider();
+                }
+            });
+        });
+    }
+
+    private void startSlider() {
+        // Only start if the runnable has been created
+        if (sliderRunnable != null) {
+            // Remove any existing callbacks to prevent duplicates
+            sliderHandler.removeCallbacks(sliderRunnable);
+            // Post the runnable with a 4-second delay
+            sliderHandler.postDelayed(sliderRunnable, 4000);
+        }
+    }
+
+    private void stopSlider() {
+        // Stop the runnable by removing any pending callbacks
+        if (sliderRunnable != null) {
+            sliderHandler.removeCallbacks(sliderRunnable);
+        }
     }
 
     @Override
-    public void onNotificationClick(com.starlms.starlms.entity.Notification notification) {
-        // ... (existing code)
+    public void onNotificationClick(Notification notification) {
+        showNotificationDetailsDialog(notification.getMessage());
     }
 
     private void showNotificationDetailsDialog(String content) {
-        // ... (existing code)
+        new AlertDialog.Builder(this)
+                .setTitle("Thông báo")
+                .setMessage(content)
+                .setPositiveButton("Đóng", null)
+                .show();
     }
 
 }

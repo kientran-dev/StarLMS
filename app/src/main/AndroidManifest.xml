@@ -16,7 +16,7 @@
         android:theme="@style/Theme.StarLMS"
         tools:targetApi="31">
         <activity
-            android:name=".LoginActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,12 +24,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity android:name=".LoginActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".CoursesActivity" />
         <activity android:name=".SessionsActivity" />
         <activity android:name=".RequestLeaveActivity" />
         <activity android:name=".GradesActivity" />
+        <activity android:name=".ExamsActivity" />
         <activity android:name=".AssignmentsActivity" />
         <activity android:name=".QuizActivity" />
         <activity android:name=".ScheduleActivity" />
@@ -40,14 +41,14 @@
         <activity android:name=".CourseRegistrationActivity" />
 
         <!-- Admin Section -->
-        <activity
-            android:name=".admin.AdminDashboardActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+<!--        <activity-->
+<!--            android:name=".admin.AdminDashboardActivity"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
         <activity
             android:name=".admin.AddEditUserActivity"
             android:windowSoftInputMode="adjustResize" />
