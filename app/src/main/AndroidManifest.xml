@@ -40,14 +40,17 @@
         <activity android:name=".CourseRegistrationActivity" />
 
         <!-- Admin Section -->
-<!--        <activity-->
-<!--            android:name=".admin.AdminDashboardActivity"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
+        <activity
+            android:name=".admin.AdminDashboardActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".admin.AddEditUserActivity"
+            android:windowSoftInputMode="adjustResize" />
 
     </application>
 

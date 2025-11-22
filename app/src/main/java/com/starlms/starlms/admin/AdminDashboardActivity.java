@@ -1,8 +1,10 @@
 package com.starlms.starlms.admin;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -10,6 +12,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.starlms.starlms.LoginActivity;
 import com.starlms.starlms.R;
 import com.starlms.starlms.admin.fragment.AdminAttendanceCourseSelectionFragment;
 import com.starlms.starlms.admin.fragment.AdminCourseManagementFragment;
@@ -17,6 +20,7 @@ import com.starlms.starlms.admin.fragment.AdminDashboardFragment;
 import com.starlms.starlms.admin.fragment.AdminFeaturesFragment;
 import com.starlms.starlms.admin.fragment.AdminLeaveCoursesFragment;
 import com.starlms.starlms.admin.fragment.AdminScheduleCourseSelectionFragment;
+import com.starlms.starlms.admin.fragment.AdminStudentManagementFragment;
 import com.starlms.starlms.admin.fragment.AdminSurveyManagementFragment;
 import com.starlms.starlms.admin.fragment.AdminTeacherManagementFragment;
 
@@ -40,6 +44,9 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminFe
                 selectedFragment = new AdminDashboardFragment();
             } else if (itemId == R.id.admin_navigation_features) {
                 selectedFragment = new AdminFeaturesFragment();
+            } else if (itemId == R.id.admin_navigation_logout) {
+                showLogoutConfirmationDialog();
+                return true; 
             }
 
             if (selectedFragment != null) {
@@ -73,6 +80,20 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminFe
         transaction.commit();
     }
 
+    private void showLogoutConfirmationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Xác nhận đăng xuất")
+                .setMessage("Bạn có chắc chắn muốn đăng xuất?")
+                .setPositiveButton("Đăng xuất", (dialog, which) -> {
+                    Intent intent = new Intent(AdminDashboardActivity.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
+
     @Override
     public void onTeacherManagementClicked() {
         loadFragment(new AdminTeacherManagementFragment(), false);
@@ -98,9 +119,13 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminFe
         loadFragment(new AdminScheduleCourseSelectionFragment(), false);
     }
 
-    // THÊM PHƯƠNG THỨC NÀY
     @Override
     public void onAttendanceManagementClicked() {
         loadFragment(new AdminAttendanceCourseSelectionFragment(), false);
+    }
+
+    @Override
+    public void onStudentManagementClicked() {
+        loadFragment(new AdminStudentManagementFragment(), false);
     }
 }

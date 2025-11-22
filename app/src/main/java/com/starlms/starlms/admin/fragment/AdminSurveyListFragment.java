@@ -172,7 +172,7 @@ public class AdminSurveyListFragment extends Fragment implements AdminSurveyList
 
         final CharSequence[] options = {"Cập nhật", "Xóa"};
         new AlertDialog.Builder(requireContext())
-                .setTitle("Lựa chọn cho: " + survey.getTitle())
+                .setTitle(survey.getTitle())
                 .setItems(options, (dialog, item) -> {
                     if (options[item].equals("Cập nhật")) {
                         showSurveyDialog(survey);

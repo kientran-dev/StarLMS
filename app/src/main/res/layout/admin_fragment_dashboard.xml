@@ -11,27 +11,12 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Thông báo gần đây"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:layout_marginBottom="8dp"/>
-
-        <!-- Notification Slider -->
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/view_pager_notifications"
+        <ImageView
             android:layout_width="match_parent"
-            android:layout_height="100dp" />
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout_dots"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:tabBackground="@drawable/tab_selector"
-            app:tabGravity="center"
-            app:tabIndicatorHeight="0dp"/>
+            android:layout_height="150dp"
+            android:src="@drawable/images"
+            android:scaleType="centerInside"
+            android:layout_marginBottom="16dp"/>
 
         <!-- Statistics Title -->
         <TextView
@@ -39,7 +24,7 @@
             android:layout_height="wrap_content"
             android:text="Thống kê chuyên cần trong tuần"
             android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="0dp"
             android:layout_marginBottom="8dp"/>
 
         <!-- Bar Chart for User Stats -->

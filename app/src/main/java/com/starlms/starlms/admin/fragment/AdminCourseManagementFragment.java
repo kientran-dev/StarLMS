@@ -104,7 +104,7 @@ public class AdminCourseManagementFragment extends Fragment {
     private void showOptionsDialog(final CourseWithTeacher courseWithTeacher) {
         final CharSequence[] options = {"Cập nhật", "Xóa"};
         new AlertDialog.Builder(requireContext())
-                .setTitle("Lựa chọn cho: " + courseWithTeacher.getCourse().getName())
+                .setTitle(courseWithTeacher.getCourse().getName())
                 .setItems(options, (dialog, item) -> {
                     if (options[item].equals("Cập nhật")) {
                         showCourseDialog(courseWithTeacher);
