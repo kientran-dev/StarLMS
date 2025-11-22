@@ -85,7 +85,7 @@ public class AdminTeacherManagementFragment extends Fragment {
     private void showOptionsDialog(final Teacher teacher) {
         final CharSequence[] options = {"Cập nhật", "Xóa"};
         new AlertDialog.Builder(requireContext())
-                .setTitle("Lựa chọn cho: " + teacher.getName())
+                .setTitle(teacher.getName())
                 .setItems(options, (dialog, item) -> {
                     if (options[item].equals("Cập nhật")) {
                         showTeacherDialog(teacher);

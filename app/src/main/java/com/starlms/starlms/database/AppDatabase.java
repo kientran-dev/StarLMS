@@ -37,7 +37,7 @@ import com.starlms.starlms.entity.User;
 import com.starlms.starlms.entity.UserCourseCrossRef;
 import com.starlms.starlms.entity.UserSurveyCompletion;
 
-@Database(entities = {User.class, Course.class, Session.class, Attendance.class, Test.class, Grade.class, Question.class, Teacher.class, Survey.class, Notification.class, Message.class, UserSurveyCompletion.class, SurveyResponse.class, LeaveRequest.class, UserCourseCrossRef.class}, version = 20, exportSchema = false)
+@Database(entities = {User.class, Course.class, Session.class, Attendance.class, Test.class, Grade.class, Question.class, Teacher.class, Survey.class, Notification.class, Message.class, UserSurveyCompletion.class, SurveyResponse.class, LeaveRequest.class, UserCourseCrossRef.class}, version = 21, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract CourseDao courseDao();

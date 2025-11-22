@@ -121,7 +121,7 @@ public class AdminSessionManagementFragment extends Fragment {
     private void showOptionsDialog(final Session session) {
         final CharSequence[] options = {"Cập nhật", "Xóa"};
         new AlertDialog.Builder(requireContext())
-                .setTitle("Lựa chọn cho: " + session.getTitle())
+                .setTitle(session.getTitle())
                 .setItems(options, (dialog, item) -> {
                     if (options[item].equals("Cập nhật")) {
                         showSessionDialog(session);
