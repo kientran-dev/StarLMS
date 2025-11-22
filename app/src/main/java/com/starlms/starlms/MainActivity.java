@@ -20,6 +20,12 @@ import com.starlms.starlms.adapter.NotificationAdapter;
 import com.starlms.starlms.database.AppDatabase;
 import com.starlms.starlms.databinding.ActivityMainBinding;
 import com.starlms.starlms.databinding.ItemFeatureBinding;
+import com.starlms.starlms.entity.Question;
+import com.starlms.starlms.entity.Test;
+import com.starlms.starlms.entity.User;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class MainActivity extends AppCompatActivity implements NotificationAdapter.OnNotificationClickListener {
@@ -36,16 +42,23 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
-        getSupportActionBar().setTitle(null);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(null);
+        }
+
+        loadUserProfile();
+        addSampleQuizData();
+
+        // Setup Toolbar icons
+        binding.profileIcon.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
 
         // Setup Features
         setupFeature(binding.featureAttendance, "Điểm danh, Xin nghỉ học", android.R.drawable.ic_menu_my_calendar);
         setupFeature(binding.featureGrades, "Bảng điểm học tập", android.R.drawable.ic_menu_agenda);
         setupFeature(binding.featureTasks, "Bài tập trắc nghiệm", android.R.drawable.ic_menu_edit);
         setupFeature(binding.featureSchedule, "Thời khóa biểu & Video", android.R.drawable.ic_menu_today);
-        setupFeature(binding.featureStudentInfo, "Thông tin học sinh", android.R.drawable.ic_menu_myplaces);
-        setupFeature(binding.featureSurvey, "Khảo sát", android.R.drawable.ic_menu_help);
         setupFeature(binding.featureRegisterCourse, "Đăng ký khóa học", android.R.drawable.ic_menu_add);
+        setupFeature(binding.featureSurvey, "Khảo sát", android.R.drawable.ic_menu_help);
 
         // Set feature click listeners
         binding.featureAttendance.getRoot().setOnClickListener(v -> {
@@ -53,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
             intent.putExtra(CoursesActivity.EXTRA_MODE, CoursesActivity.MODE_ATTENDANCE);
             startActivity(intent);
         });
-        binding.featureStudentInfo.getRoot().setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         binding.featureGrades.getRoot().setOnClickListener(v -> {
             Intent intent = new Intent(this, CoursesActivity.class);
             intent.putExtra(CoursesActivity.EXTRA_MODE, CoursesActivity.MODE_GRADES);
@@ -64,9 +76,13 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
             intent.putExtra(CoursesActivity.EXTRA_MODE, CoursesActivity.MODE_ASSIGNMENTS);
             startActivity(intent);
         });
-        binding.featureSurvey.getRoot().setOnClickListener(v -> startActivity(new Intent(this, SurveyActivity.class)));
-        binding.featureSchedule.getRoot().setOnClickListener(v -> startActivity(new Intent(this, CoursesActivity.class)));
+        binding.featureSchedule.getRoot().setOnClickListener(v -> {
+            Intent intent = new Intent(this, CoursesActivity.class);
+            intent.putExtra(CoursesActivity.EXTRA_MODE, CoursesActivity.MODE_SCHEDULE_OR_VIDEO);
+            startActivity(intent);
+        });
         binding.featureRegisterCourse.getRoot().setOnClickListener(v -> startActivity(new Intent(this, CourseRegistrationActivity.class)));
+        binding.featureSurvey.getRoot().setOnClickListener(v -> startActivity(new Intent(this, SurveyActivity.class)));
 
         // Setup Bottom Navigation
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
@@ -77,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
                 startActivity(new Intent(this, MessagesActivity.class));
                 return true;
             } else if (itemId == R.id.navigation_contacts) {
-                showFeedbackDialog(); // SỬA Ở ĐÂY
+                showFeedbackDialog();
                 return true;
             } else if (itemId == R.id.navigation_settings) {
                 showLogoutDialog();
@@ -86,9 +102,47 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
             return false;
         });
 
-        // insertSampleData(); // Comment out to avoid re-inserting data on every launch
         setupNotificationSlider();
     }
+
+    private void addSampleQuizData() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+
+            // Check if data already exists
+            if (db.testDao().getTestsForCourse(1).isEmpty()) {
+                // Test 1 for Course 1
+                Test test1 = new Test(0, "Bài kiểm tra giữa kỳ", "Kiểm tra kiến thức cơ bản", 100, 1);
+                long test1Id = db.testDao().insert(test1);
+
+                db.questionDao().insert(new Question(0, "Đâu là thủ đô của Việt Nam?", "Hà Nội", "Đà Nẵng", "TP.HCM", "Hải Phòng", 1, (int)test1Id));
+                db.questionDao().insert(new Question(0, "Ngôn ngữ lập trình chính cho Android là gì?", "Kotlin", "Swift", "Java", "C#", 1, (int)test1Id));
+                db.questionDao().insert(new Question(0, "Đâu là một widget trong Android?", "TextView", "Array", "String", "Integer", 1, (int)test1Id));
+
+                // Test 2 for Course 1
+                Test test2 = new Test(0, "Bài kiểm tra cuối kỳ", "Kiểm tra kiến thức tổng hợp", 100, 1);
+                long test2Id = db.testDao().insert(test2);
+
+                db.questionDao().insert(new Question(0, "Lớp nào được sử dụng để tạo một danh sách cuộn?", "RecyclerView", "ListView", "ScrollView", "Both A and B", 4, (int)test2Id));
+            }
+        });
+    }
+
+    private void loadUserProfile() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+            User user = db.userDao().findById(1);
+
+            if (user != null) {
+                runOnUiThread(() -> {
+                    binding.userName.setText(user.getFullName());
+                });
+            }
+        });
+    }
+
 
     private void showFeedbackDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -105,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
             if (feedback.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập ý kiến của bạn", Toast.LENGTH_SHORT).show();
             } else {
-                // In a real app, you would send this feedback to a server or save it.
                 Toast.makeText(this, "Cảm ơn bạn đã gửi phản hồi!", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
@@ -139,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
 
     private void setupFeature(ItemFeatureBinding featureBinding, String text, int iconResId) {
         featureBinding.featureName.setText(text);
-        if (iconResId != 0) {
+        if (iconResId != -1) {
             featureBinding.featureIcon.setImageResource(iconResId);
         } else {
             featureBinding.featureIcon.setImageResource(android.R.drawable.sym_def_app_icon);
@@ -147,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
     }
 
     private void setupNotificationSlider() {
-        // ... (existing code, assumes AppDatabase and Notification entities are available)
+        // ... (existing code)
     }
 
     @Override
@@ -158,8 +211,5 @@ public class MainActivity extends AppCompatActivity implements NotificationAdapt
     private void showNotificationDetailsDialog(String content) {
         // ... (existing code)
     }
-
-    // The insertSampleData method is removed from onCreate to avoid re-insertion
-    // You might want to have a separate mechanism for database seeding.
 
 }

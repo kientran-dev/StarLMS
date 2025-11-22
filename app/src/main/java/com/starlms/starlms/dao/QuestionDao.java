@@ -11,6 +11,9 @@ import java.util.List;
 @Dao
 public interface QuestionDao {
     @Insert
+    void insert(Question question);
+
+    @Insert
     void insertAll(Question... questions);
 
     @Query("SELECT * FROM questions WHERE testOwnerId = :testId")

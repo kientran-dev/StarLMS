@@ -11,6 +11,9 @@ import java.util.List;
 @Dao
 public interface TestDao {
     @Insert
+    long insert(Test test);
+
+    @Insert
     List<Long> insertAll(Test... tests);
 
     @Insert

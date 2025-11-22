@@ -11,14 +11,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.starlms.starlms.R;
 import com.starlms.starlms.entity.Schedule;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder> {
 
     private final List<Schedule> scheduleList;
+    private final SimpleDateFormat timeFormat;
 
     public ScheduleAdapter(List<Schedule> scheduleList) {
         this.scheduleList = scheduleList;
+        this.timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
     }
 
     @NonNull
@@ -31,9 +35,12 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
     @Override
     public void onBindViewHolder(@NonNull ScheduleViewHolder holder, int position) {
         Schedule schedule = scheduleList.get(position);
-        holder.tvDatetime.setText(schedule.getDatetime());
+
+        String startTime = timeFormat.format(schedule.getDateTime());
+
+        holder.tvSessionTime.setText(String.format("Thời gian: %s", startTime));
         holder.tvSubject.setText(schedule.getSubject());
-        holder.tvTeacher.setText(schedule.getTeacher());
+        holder.tvTeacher.setText(schedule.getTeacherInfo());
         holder.tvClassroom.setText(schedule.getClassroom());
     }
 
@@ -43,14 +50,14 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
     }
 
     static class ScheduleViewHolder extends RecyclerView.ViewHolder {
-        TextView tvDatetime;
+        TextView tvSessionTime;
         TextView tvSubject;
         TextView tvTeacher;
         TextView tvClassroom;
 
         public ScheduleViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvDatetime = itemView.findViewById(R.id.tv_schedule_datetime);
+            tvSessionTime = itemView.findViewById(R.id.tv_session_time);
             tvSubject = itemView.findViewById(R.id.tv_schedule_subject);
             tvTeacher = itemView.findViewById(R.id.tv_schedule_teacher);
             tvClassroom = itemView.findViewById(R.id.tv_schedule_classroom);

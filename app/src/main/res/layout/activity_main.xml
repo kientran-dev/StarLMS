@@ -28,7 +28,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <!-- SỬA Ở ĐÂY: Thay avatar bằng logo -->
                     <ImageView
                         android:id="@+id/avatar"
                         android:layout_width="40dp"
@@ -44,9 +43,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:text="Trần Trung Kiên"
+                        android:text="StarLMS User"
                         android:textAppearance="?attr/textAppearanceTitleLarge"
                         app:layout_constraintStart_toEndOf="@id/avatar"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <ImageView
+                        android:id="@+id/profile_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:src="@android:drawable/ic_menu_myplaces"
+                        app:tint="@color/material_on_surface_emphasis_medium"
+                        app:layout_constraintEnd_toStartOf="@id/notification_icon"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"/>
 
@@ -56,6 +66,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
                         android:src="@android:drawable/ic_notification_overlay"
+                        app:tint="@color/material_on_surface_emphasis_medium"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"/>
@@ -127,20 +138,9 @@
                     android:weightSum="3">
 
                     <include layout="@layout/item_feature" android:id="@+id/feature_schedule" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
-                    <include layout="@layout/item_feature" android:id="@+id/feature_student_info" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
+                    <include layout="@layout/item_feature" android:id="@+id/feature_register_course" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
                     <include layout="@layout/item_feature" android:id="@+id/feature_survey" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal"
-                    android:weightSum="3">
-
-                    <include layout="@layout/item_feature" android:id="@+id/feature_register_course" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
-                    
                 </LinearLayout>
 
             </LinearLayout>
